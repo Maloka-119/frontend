@@ -1,0 +1,440 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light grey background */
+    color: #333; /* Dark text for readability */
+    margin: 0;
+    padding: 0;
+}
+
+/* Tourist Home Container */
+.touristhome-container {
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    filter: brightness(60%); /* Darken background image */
+}
+
+/* Header Styles */
+.tourdetail h1 {
+    color: #003366; /* Dark blue for heading */
+    text-align: center;
+    margin-top: 40px;
+    font-size: 2.5rem;
+}
+
+/* Filters Section */
+.category-filter, .search-bar, .price-filter, .sort-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.category-filter select, .search-bar input, .price-filter input, .sort-section select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #fff; /* Light background for input fields */
+    color: #333;
+    width: 100%; /* Ensure inputs are responsive */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.category-filter select:focus, .search-bar input:focus, .price-filter input:focus, .sort-section select:focus {
+    border-color: #003366; /* Dark blue border on focus */
+}
+
+/* Trip Cards */
+.trip-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.tourist-card {
+    background-color: #fff; /* Light background for cards */
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 250px;
+    transition: transform 0.3s ease;
+}
+
+.tourist-card:hover {
+    transform: translateY(-5px);
+}
+
+.tourist-card h3 {
+    color: #003366; /* Dark blue for trip name */
+    margin: 10px 0;
+    font-size: 1.25rem;
+}
+
+.tourist-card p {
+    color: #666; /* Medium grey for text */
+    font-size: 1rem;
+}
+
+.tourist-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Button Styling */
+.button-container button {
+    background-color: #003366; /* Dark blue button */
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+    background-color: #002244; /* Darker blue on hover */
+}
+
+/* Trip Details */
+.trip-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.trip-details h2 {
+    color: #003366;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.trip-details p {
+    color: #333;
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+.trip-details h3 {
+    color: #003366;
+    font-size: 1.5rem;
+    margin-top: 20px;
+}
+
+.trip-details ul {
+    padding-left: 20px;
+}
+
+.trip-details ul li {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Booking Form */
+.booking-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.booking-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9; /* Very light grey for inputs */
+    color: #333;
+}
+
+.booking-form button {
+    background-color: #003366;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.booking-form button:hover {
+    background-color: #002244;
+}
+
+.booking-form .back-button {
+    background-color: #f44336; /* Red for back button */
+    margin-top: 10px;
+}
+
+/* Reviews Section */
+.reviews-view {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.reviews-view h3 {
+    color: #003366;
+    font-size: 1.75rem;
+}
+
+.reviews-view textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.reviews-view button {
+    background-color: #003366;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.reviews-view button:hover {
+    background-color: #002244;
+}
+
+/* Reviews Section Styles */
+.reviewsContainerStyle {
+    margin-top: 40px;
+}
+
+.reviewsTitleStyle {
+    font-size: 2rem;
+    color: #003366;
+    margin-bottom: 20px;
+}
+
+.reviewContainerStyle {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reviewTitleStyle {
+    font-size: 1.25rem;
+    color: #003366;
+    margin-bottom: 10px;
+}
+
+.starsContainerStyle {
+    margin-bottom: 10px;
+}
+
+.reviewTextStyle {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.reviewDateStyle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.noReviewsStyle {
+    font-size: 1rem;
+    color: #888;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.reviewFormContainerStyle {
+    margin-top: 20px;
+}
+
+.ratingContainerStyle {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.ratingContainerStyle span {
+    cursor: pointer;
+    font-size: 25px; /* Larger stars for better interaction */
+    color: #ccc;
+    margin: 0 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tourist-card {
+        width: 100%; /* Full width on smaller screens */
+    }
+
+    .button-container button {
+        font-size: 0.9rem;
+    }
+}
+.review-section {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f0f4f8; /* light grey-blue background */
+    border-radius: 10px;
+    color: #333;
+  }
+  
+  .review-title {
+    color: #0056b3; /* deep blue */
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .review-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-left: 5px solid #007bff; /* blue accent */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .review-heading {
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 18px;
+  }
+  
+  .review-stars {
+    margin-bottom: 8px;
+  }
+  
+  .star-filled {
+    color: #FFD700; /* gold */
+    font-size: 20px;
+  }
+  
+  .star-empty {
+    color: #ccc;
+    font-size: 20px;
+  }
+  
+  .review-text {
+    margin-bottom: 5px;
+    color: #444;
+  }
+  
+  .review-date {
+    font-size: 12px;
+    color: #777;
+  }
+  
+  .no-reviews {
+    color: #777;
+    font-style: italic;
+  }
+  
+  .back-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #d32f2f;
+  }
+  .button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.book-button:hover {
+  background-color: #0056b3;
+}
+
+.back-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #e53935;
+}
+/* Button styles */
+.button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .book-button {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .book-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .back-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .back-button:hover {
+    background-color: #e53935;
+  }
+  
+  .details-button {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .details-button:hover {
+    background-color: #388e3c;
+  }
+  
+  .cancel-button {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .cancel-button:hover {
+    background-color: #f57c00;
+  }
+  
+  

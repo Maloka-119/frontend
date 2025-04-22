@@ -1,0 +1,110 @@
+.welcome-message-box {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 50px;
+    border-radius: 20px;
+    color: white;
+    max-width: 500px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+  
+  .welcome-message-box h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+  }
+  
+  .button-container button {
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .login-button {
+    background-color: #1580fa;
+    color: white;
+  }
+  
+  .login-button:hover {
+    background-color: #34a1db;
+  }
+  
+  .learn-more-button {
+    background: #f7cd29;
+    border: 2px solid #f7cd29;
+    color: white;
+  }
+  
+  .learn-more-button:hover {
+    background-color: #f5e297;
+    color: #111827;
+  }
+
+.fullscreen-background{
+  
+  background-size: cover;
+  border-radius: 8px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+  justify-content: center; 
+  align-items: center; 
+  background-color: white;
+}
+
+.overlay-background {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('./Beach.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .info-section {
+    background-color: #fdfdfd;
+    padding: 80px 20px;
+    text-align: center;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .info-content {
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .info-section h2 {
+    font-size: 36px;
+    color: #0077b6;
+    margin-bottom: 25px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  .info-section p {
+    font-size: 20px;
+    color: #333;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.05);
+  }
+  

@@ -1,0 +1,219 @@
+
+
+.tour-management {
+    padding: 20px;
+    background-color: #f4f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .tour-management-container {
+    padding: 20px;
+    background: repeat-y center center fixed;
+    background-size: cover;
+    border-radius: 8px;
+    max-width: 100%;
+    margin: 0 auto;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h2 {
+    color: #1d4ed8;
+    text-align: center;
+  }
+  
+  .tour-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+  
+  .tour-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 250px; /* تعديل العرض ليكون أكبر */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto; /* السماح للكارد بأن يكون مرنًا حسب المحتوى */
+    min-height: 250px; /* تحديد الحد الأدنى للارتفاع */
+  }
+  
+  .tour-card h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    word-wrap: break-word; /* السماح بتفصيل النصوص الطويلة */
+  }
+  
+  .tour-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    word-wrap: break-word; /* السماح بتفصيل النصوص الطويلة */
+  }
+  
+  .tour-card button {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .tour-card button:hover {
+    background-color: #1b3d8a;
+  }
+  
+  .tour-card .delete-button { 
+    background-color: red; /* تغيير لون زر الحذف إلى الأحمر */
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .tour-card .delete-button:hover {
+    background-color: darkred; /* تدرج اللون عند المرور على الزر */
+  }
+  
+  form {
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 85%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  form input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box ;
+  }
+  
+  form button {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    
+  }
+  
+  form button:hover {
+    background-color: #1b3d8a;
+  }
+  
+  
+    /* Toggle Switch */
+    input[type="checkbox"].sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    
+    .block {
+      background-color: #d1d5db;
+      width: 48px;
+      height: 26px;
+      border-radius: 9999px;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+    
+    input[type="checkbox"]:checked + .block {
+      background-color: #4ade80; /* Green when active */
+    }
+    
+    .dot {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      background-color: white;
+      border-radius: 9999px;
+      transition: transform 0.3s ease;
+    }
+    
+    input[type="checkbox"]:checked + .block .dot {
+      transform: translateX(22px);
+    }
+    
+    /* Add text inside the switch */
+    .status-text {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: white;
+      font-weight: bold;
+    }
+    
+    input[type="checkbox"]:checked + .block .status-text {
+      left: 8px; /* Adjust text position when the switch is on */
+    }
+    .formtm{
+      margin-left: 40px;
+  margin-right: auto;
+    }
+
+    .logouttourist {
+      position: fixed;
+      top: 20px;  /* المسافة من أعلى الصفحة */
+      right: 20px;  /* المسافة من يمين الصفحة */
+      background-color: #f44336;  /* لون خلفية الأيقونة */
+      color: white;  /* لون الأيقونة */
+      border-radius: 5px;  /* لتقريب الزوايا وتحويل الأيقونة إلى مربع بحواف */
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;  /* لضمان ظهور الأيقونة فوق باقي المحتوى */
+      transition: background-color 0.3s ease;  /* تأثير التغيير في الخلفية عند التمرير */
+      text-decoration: none;  /* إلغاء الخط أسفل الكلمة إذا كانت الأيقونة داخل رابط */
+  }
+  
+  .logouttourist:hover {
+      background-color: #d32f2f;  /* تغيير اللون عند التمرير */
+  }
+  
+  .logouttourist i {
+      font-size: 30px;  /* حجم الأيقونة */
+  }

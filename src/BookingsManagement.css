@@ -1,0 +1,100 @@
+.bookings-management-container {
+    padding: 20px;
+    background-color: #f4f7fa;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* تجنب تجمع المحتوى في المنتصف */
+    background: repeat-y center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+  }
+  
+  h2 {
+    color: #1d4ed8;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .pending-bookings, .all-bookings {
+    width: 100%;
+    margin-bottom: 40px; /* إضافة فاصل بين الأقسام */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* المسافة بين البطاقات */
+    justify-content: space-between; /* توزيع العناصر بشكل متساو */
+  }
+  
+  .booking-card {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: calc(33.33% - 20px); /* 3 بطاقات في السطر مع مسافة متساوية */
+    text-align: center;
+    box-sizing: border-box;
+    min-width: 250px; /* الحد الأدنى للعرض */
+    flex: 1;
+    margin-bottom: 20px; /* إضافة مسافة أسفل البطاقة */
+  }
+  
+  .booking-card h4 {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  .booking-card p {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .booking-card button {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .booking-card button:hover {
+    background-color: #1b3d8a;
+  }
+  
+  .booking-card button.approve {
+    background-color: #28a745;
+  }
+  
+  .booking-card button.reject {
+    background-color: #dc3545;
+  }
+  
+  .booking-card button.approve:hover {
+    background-color: #218838;
+  }
+  
+  .booking-card button.reject:hover {
+    background-color: #c82333;
+  }
+  
+  /* التنسيق في الشاشات الصغيرة */
+  @media (max-width: 768px) {
+    .booking-card {
+      width: calc(50% - 20px); /* عرض البطاقات 50% في الشاشات الصغيرة */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .booking-card {
+      width: 100%; /* عرض البطاقات 100% في الشاشات الصغيرة جدًا */
+    }
+  }
+  

@@ -1,0 +1,88 @@
+.dashboard-container {
+  padding: 24px;
+  min-height: 100vh;
+  background: repeat-y center center fixed;
+  background-size: cover;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* أول صف يحتوي على 2 كروت */
+  gap: 15px; /* مسافات متساوية بين الكروت */
+  margin-top: 30px;
+  column-gap: 0px;
+}
+
+.dashboard-card {
+  background-color: rgba(255, 255, 255, 0.692);  
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  min-height: 150px;
+  max-width: 180px;  /*card size*/
+  color: #374151;
+
+}
+
+/* توزيع الكروت بحيث يكون الصف الثاني مكون من 2 كروت والثالث كرت واحد */
+.dashboard-grid > .dashboard-card:nth-child(3),
+.dashboard-grid > .dashboard-card:nth-child(4) {
+  grid-column: span 1;  /* توزيع الكروت بشكل متساوي */
+}
+
+.dashboard-grid > .dashboard-card:nth-child(5) {
+  grid-column: span 2;  /* الكرت الأخير في الصف الثالث */
+}
+
+.dashboard-card h2 {
+  font-size: 1.2rem;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.dashboard-card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0;
+  background-color: #1d4ed8;
+  padding: 10px 20px;
+  border-radius: 8px;
+  align-items: center;
+}
+
+.navbar-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.navbar-link:hover {
+  background-color: #2563eb;
+}
+
+.navbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+  

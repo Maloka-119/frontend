@@ -1,0 +1,88 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background:  no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.register-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 450px;
+  color: #007bff;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.register-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #007bff;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.register-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.register-button:hover {
+  background-color: #0056b3;
+}
+
+.backto {
+  position: fixed;
+  top: 20px;  /* المسافة من أعلى الصفحة */
+  left: 20px;  /* المسافة من يمين الصفحة */
+  background-color: transparent;  /* لون خلفية الأيقونة الأزرق */
+  color: white;  /* لون الأيقونة */
+  border-radius: 5px;  /* لتقريب الزوايا وتحويل الأيقونة إلى مربع بحواف */
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;  /* لضمان ظهور الأيقونة فوق باقي المحتوى */
+  transition: background-color 0.3s ease;  /* تأثير التغيير في الخلفية عند التمرير */
+  text-decoration: none;  /* إلغاء الخط أسفل الكلمة إذا كانت الأيقونة داخل رابط */
+}
+
+
+
+.backto i {
+  font-size: 30px;  /* حجم الأيقونة */
+}

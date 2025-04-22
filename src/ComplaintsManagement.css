@@ -1,0 +1,158 @@
+
+.complaints-management-container {
+  padding: 20px;
+  background: repeat-y center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: center; 
+  min-height: 100vh; 
+  color: rgb(80, 78, 78);
+}
+
+  
+  
+  h2 {
+    text-align: center; 
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 20px; 
+    margin-bottom: 20px; 
+  }
+  
+  
+  .complaints-table {
+    width: 90%; 
+    margin-top: 40px;
+    border-collapse: collapse;
+    /* background-color: rgba(255, 255, 255, 0.8);  */
+    background-color: rgba(255, 255, 255, 0.6); /* خففنا الأبيض */
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .complaints-table th, .complaints-table td {
+    padding: 8px 15px; 
+    text-align: left;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.507); /* صفوف أخف */
+  }
+  
+  .complaints-table th {
+    background-color: #e9ca19; 
+    color: white; 
+  }
+  
+  .complaints-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.507); 
+  }
+  
+  .complaints-table tr:nth-child(odd) {
+    background-color: #ffffff; 
+  }
+  
+ 
+  .error-message {
+    color: red;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+
+  .response-section {
+    margin-top: 30px;
+    width: 60%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 15px;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 80px; 
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    background-color: #f9f9f9;
+    font-size: 14px;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .respond-btn {
+    padding: 12px 20px;
+    background-color: #059669; /* أخضر مناسب */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    flex: 1;
+  }
+  
+  .respond-btn:hover {
+    background-color: #047857;
+  }
+  
+  .respond-btn:active {
+    background-color: #065f46;
+  }
+  
+  .info-btn {
+    padding: 12px 20px;
+    background-color: #004d99; /* الأزرق اللي كنت مستخدمه */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    flex: 1;
+  }
+  
+  .info-btn:hover {
+    background-color: #003366;
+  }
+  
+  .info-btn:active {
+    background-color: #002244;
+  }
+
+  .respond-btn,
+.info-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+  
+  
+.submit-response {
+    background-color: #e9ca19; 
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 45%; 
+  }
+  
+  .submit-response:hover {
+    background-color: #d1b516; 
+  }
+  
+  .submit-response:active {
+    background-color: #b8a514; 
+  }
+  
+  .complaints-table button {
+    margin-bottom: 5px; 
+    margin-top: 5px;
+  }
+  
