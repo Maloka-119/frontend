@@ -137,10 +137,7 @@
 //         </table>
 //       )}
 
-//       {/* Icon link to home page */}
-//       <a href="/admin" className="home-icon-link">
-//         <img src={BackiconAdmin} alt="Home" className="home-icon" />
-//       </a>
+
 //     </div>
 //   );
 // };
@@ -154,24 +151,38 @@
 import React, { useEffect, useState } from 'react';
 import './MonitorBookings.css';
 import Bookingman from './Bookingman.jpg';
-import BackiconAdmin from './BackiconAdmin.jpg'
+import BackiconAdmin from './BackiconAdmin.jpg';
+import { useNavigate } from 'react-router-dom';
 
 const MonitorBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
     status: '',
   });
 
-  // محاكاة API وهمي
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        // استخدام API وهمي
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts'); // API وهمي لاختبار الكود
+         const storedToken = JSON.parse(localStorage.getItem("token"));
+        const response = await fetch('https://localhost:7050/api/Booking', {
+          headers: {
+            'Authorization': `Bearer ${storedToken.tokenValue.token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Unauthorized: Please log in first.');
+          }
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
         const mockBookings = data.slice(0, 10).map((post, index) => ({
           id: index + 1,
@@ -180,41 +191,46 @@ const MonitorBookings = () => {
           date: '2025-04-08',
           status: index % 2 === 0 ? 'approved' : 'pending',
         }));
+
         setBookings(mockBookings);
       } catch (err) {
-        setError('Failed to fetch bookings.');
+        setError(err.message || 'Failed to fetch bookings.');
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchBookings();
   }, []);
 
   const handleAction = async (id, action) => {
     try {
-      const url = `https://jsonplaceholder.typicode.com/posts/${id}`; // API وهمي
-      const method = action === 'cancel' ? 'DELETE' : 'PUT'; // DELETE للحذف أو PUT للتحديث
+     const storedToken = JSON.parse(localStorage.getItem("token"));
+      const url = `http://localhost:7050/api/Booking/${id}`;
+      const method = action === 'cancel' ? 'DELETE' : 'PUT';
+
       const response = await fetch(url, {
-        method: method,
+        method,
         headers: {
+          'Authorization': `Bearer ${storedToken.tokenValue.token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: action }), // تحديث الحالة إذا كانت عملية الموافقة أو الإلغاء
+        body: method === 'PUT' ? JSON.stringify({ status: action }) : null,
       });
 
-      if (response.ok) {
-        setBookings(bookings.filter((booking) => booking.id !== id));
-      } else {
-        setError('Failed to update booking.');
+      if (!response.ok) {
+        throw new Error('Failed to update booking.');
       }
+
+      // تحديث الواجهة بعد نجاح العملية
+      setBookings(bookings.filter((booking) => booking.id !== id));
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError(err.message || 'Network error. Please try again.');
       console.error(err);
     }
   };
 
-  // تصفية البيانات بناءً على الفلاتر
   const filteredBookings = bookings.filter((booking) => {
     const matchesStartDate = filters.startDate
       ? new Date(booking.date) >= new Date(filters.startDate)
@@ -229,7 +245,7 @@ const MonitorBookings = () => {
 
   return (
     <div className="monitor-bookings-container" style={{ backgroundImage: `url(${Bookingman})` }}>
-      <h2 style={{color:"white"}}>Monitor All Bookings and Transactions</h2>
+      <h2 style={{ color: "white" }}>Monitor All Bookings and Transactions</h2>
 
       {/* فلاتر البيانات */}
       <div className="filters">
@@ -280,22 +296,14 @@ const MonitorBookings = () => {
                 <td>{new Date(booking.date).toLocaleDateString()}</td>
                 <td>{booking.status}</td>
                 <td>
-                  <button onClick={() => handleAction(booking.id, 'approve')}>
-                    Approve
-                  </button>
-                  <button onClick={() => handleAction(booking.id, 'cancel')}>
-                    Cancel
-                  </button>
+                  <button onClick={() => handleAction(booking.id, 'approve')}>Approve</button>
+                  <button onClick={() => handleAction(booking.id, 'cancel')}>Cancel</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      {/* Icon link to home page */}
-  <a href="/admin" className="home-icon-link">
-    <img src={BackiconAdmin} alt="Home" className="home-icon" /> 
-  </a>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+
+
 // import React, { useEffect, useState } from 'react';
 
 // import Appagenbackgr from './Appagenbackgr.jpg';
@@ -8,15 +10,16 @@
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState('');
 
-//   const API_URL = "https://your-api-url.com"; // عدل ده حسب السيرفر بتاعك
+//   const API_URL = "https://localhost:7050/api/TripPackage"; 
 
 //   useEffect(() => {
 //     fetchTours();
 //   }, []);
 
+//   // دالة لتحميل البيانات
 //   const fetchTours = async () => {
 //     try {
-//       const response = await fetch(`${API_URL}/tours?status=pending`);
+//       const response = await fetch(`${API_URL}/todos`);
 //       const data = await response.json();
 //       setTours(data);
 //     } catch (err) {
@@ -27,17 +30,18 @@
 //     }
 //   };
 
+//   // دالة للتحديث (موافقة أو رفض)
 //   const handleTourAction = async (id, action) => {
 //     try {
-//       await fetch(`${API_URL}/tours/${id}`, {
+//       await fetch(`${API_URL}/todos/${id}`, {
 //         method: 'PATCH',
 //         headers: {
 //           'Content-Type': 'application/json',
 //         },
-//         body: JSON.stringify({ status: action }), // action = "approved" أو "rejected"
+//         body: JSON.stringify({ completed: action === 'approved' }), // action = "approved" أو "rejected"
 //       });
 
-//       fetchTours(); // تحديث القائمة بعد الإجراء
+//       fetchTours(); // تحديث الرحلات بعد التحديث
 //     } catch (err) {
 //       console.error(`Error updating tour ${id} to ${action}`);
 //     }
@@ -45,7 +49,7 @@
 
 //   return (
 //     <div className="complaints-management-container" style={{ backgroundImage: `url(${Appagenbackgr})` }}>
-//       <h2 style={{ color: "white" }}>Pending Tours</h2>
+//       <h2 style={{ color: "white" }}>Manage Tour Applications</h2>
 
 //       {loading ? (
 //         <p>Loading tours...</p>
@@ -58,7 +62,7 @@
 //               <th>Tour ID</th>
 //               <th>Title</th>
 //               <th>Agency Name</th>
-//               <th>Destination</th> 
+//               <th>Destination</th>
 //               <th>Price</th>
 //               <th>Duration (Days)</th>
 //               <th>Status</th>
@@ -70,17 +74,17 @@
 //               <tr key={tour.id}>
 //                 <td>{tour.id}</td>
 //                 <td>{tour.title}</td>
-//                 <td>{tour.agencyName}</td>
-//                 <td>{tour.Destination}</td> 
-//                 <td>{tour.price}</td>
-//                 <td>{tour.duration}</td>
-//                 <td>{tour.status}</td>
+//                 <td>Agency {tour.userId}</td> {/* بما أن الـ JSONPlaceholder مفيش وكالة معينة */}
+//                 <td>{tour.Destination}</td>
+//                 <td>{tour.id * 10}</td> {/* سعر وهمي */}
+//                 <td>5</td> {/* مدة وهمية */}
+//                 <td>{tour.completed ? "Approved" : "Pending"}</td>
 //                 <td>
 //                   <div className="button-group">
-//                     <button className="respond-btn" onClick={() => handleTourAction(tour.id, 'approved')}>
+//                     <button className="respond-btn"  onClick={() => handleTourAction(tour.id, 'approved')}>
 //                       Approve
 //                     </button>
-//                     <button className="info-btn" onClick={() => handleTourAction(tour.id, 'rejected')}>
+//                     <button className="info-btn" style={{background:"red"}} onClick={() => handleTourAction(tour.id, 'rejected')}>
 //                       Reject
 //                     </button>
 //                   </div>
@@ -91,17 +95,13 @@
 //         </table>
 //       )}
 
-//       <a href="/admin" className="home-icon-link">
-//         <img src={BackiconAdmin} alt="Home" className="home-icon" />
-//       </a>
+      
 //     </div>
 //   );
 // };
 
 // export default PendingTours;
-
 import React, { useEffect, useState } from 'react';
-
 import Appagenbackgr from './Appagenbackgr.jpg';
 import BackiconAdmin from './BackiconAdmin.jpg';
 
@@ -110,18 +110,28 @@ const PendingTours = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_URL = "https://jsonplaceholder.typicode.com"; // اللينك الوهمي
+  const API_URL = "https://localhost:7050/api/TripPackage"; 
+
+  const storedToken = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     fetchTours();
   }, []);
 
-  // دالة لتحميل البيانات
   const fetchTours = async () => {
     try {
-      const response = await fetch(`${API_URL}/todos`);
+      const response = await fetch(`${API_URL}`, {
+        headers: {
+          'Authorization': `Bearer ${storedToken.tokenValue.token}`,
+        },
+      });
       const data = await response.json();
-      setTours(data);
+      console.log(data);  // تحقق من البيانات هنا
+      if (Array.isArray(data)) {
+        setTours(data);  // تأكد من أن البيانات مصفوفة
+      } else {
+        setError('Data format is not correct.');
+      }
     } catch (err) {
       setError('Error fetching tours.');
       console.error(err);
@@ -130,18 +140,17 @@ const PendingTours = () => {
     }
   };
 
-  // دالة للتحديث (موافقة أو رفض)
   const handleTourAction = async (id, action) => {
     try {
-      await fetch(`${API_URL}/todos/${id}`, {
-        method: 'PATCH',
+      await fetch(`${API_URL}/${id}/status?status=${action}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${storedToken.tokenValue.token}`,
         },
-        body: JSON.stringify({ completed: action === 'approved' }), // action = "approved" أو "rejected"
       });
 
-      fetchTours(); // تحديث الرحلات بعد التحديث
+      fetchTours(); // إعادة تحميل الرحلات
     } catch (err) {
       console.error(`Error updating tour ${id} to ${action}`);
     }
@@ -156,48 +165,48 @@ const PendingTours = () => {
       ) : error ? (
         <p className="error-message">{error}</p>
       ) : (
-        <table className="complaints-table">
-          <thead>
-            <tr>
-              <th>Tour ID</th>
-              <th>Title</th>
-              <th>Agency Name</th>
-              <th>Destination</th>
-              <th>Price</th>
-              <th>Duration (Days)</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tours.map((tour) => (
-              <tr key={tour.id}>
-                <td>{tour.id}</td>
-                <td>{tour.title}</td>
-                <td>Agency {tour.userId}</td> {/* بما أن الـ JSONPlaceholder مفيش وكالة معينة */}
-                <td>{tour.Destination}</td>
-                <td>{tour.id * 10}</td> {/* سعر وهمي */}
-                <td>5</td> {/* مدة وهمية */}
-                <td>{tour.completed ? "Approved" : "Pending"}</td>
-                <td>
-                  <div className="button-group">
-                    <button className="respond-btn"  onClick={() => handleTourAction(tour.id, 'approved')}>
-                      Approve
-                    </button>
-                    <button className="info-btn" style={{background:"red"}} onClick={() => handleTourAction(tour.id, 'rejected')}>
-                      Reject
-                    </button>
-                  </div>
-                </td>
+        Array.isArray(tours) && tours.length > 0 ? (
+          <table className="complaints-table">
+            <thead>
+              <tr>
+                <th>Tour ID</th>
+                <th>Title</th>
+                <th>Agency Name</th>
+                <th>Destination</th>
+                <th>Price</th>
+                <th>Duration (Days)</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {tours.map((tour) => (
+                <tr key={tour.id}>
+                  <td>{tour.id}</td>
+                  <td>{tour.title}</td>
+                  <td>Agency {tour.travelAgencyId}</td> {/* Assuming 'travelAgencyId' exists */}
+                  <td>{tour.destination}</td> {/* Assuming 'destination' exists */}
+                  <td>{tour.price}</td> {/* Assuming 'price' exists */}
+                  <td>{tour.durationDays}</td> {/* Assuming 'durationDays' exists */}
+                  <td>{tour.status || "Pending"}</td> {/* Assuming 'status' exists */}
+                  <td>
+                    <div className="button-group">
+                      <button className="respond-btn" onClick={() => handleTourAction(tour.id, 'Approved')}>
+                        Approve
+                      </button>
+                      <button className="info-btn" style={{ background: "red" }} onClick={() => handleTourAction(tour.id, 'Rejected')}>
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No tours available</p>
+        )
       )}
-
-      <a href="/admin" className="home-icon-link">
-        <img src={BackiconAdmin} alt="Home" className="home-icon" />
-      </a>
     </div>
   );
 };
