@@ -7,31 +7,35 @@ export default function BookingsManagementPage() {
   const [bookings, setBookings] = useState([]);
   const [pendingBookings, setPendingBookings] = useState([]);
 
-  const apiUrl = "https://localhost:7050/api/Booking"; // URL الـ API الذي سيتم التفاعل معه
-  const storedToken = JSON.parse(localStorage.getItem("token")); // الحصول على التوكن من الـ localStorage
+  const apiUrl = "https://localhost:7050/api/Booking";
+  const storedToken = localStorage.getItem("token"); // تم التعديل هنا - إزالة JSON.parse
 
-  // إعداد الـ headers التي تحتوي على التوكن
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${storedToken.tokenValue.token}`, // إضافة التوكن في الـ header
+    'Authorization': `Bearer ${storedToken}`,
   };
 
   // جلب الحجوزات من الـ API
   const fetchBookings = async () => {
     try {
-      const response = await fetch(apiUrl, { headers }); // إرسال الـ headers مع الطلب
+      const response = await fetch(apiUrl, { headers });
+      if (!response.ok) {
+        throw new Error('Failed to fetch bookings');
+      }
       const data = await response.json();
 
-      // بيانات وهمية للتجربة فقط
-      const fakeData = data.slice(0, 5).map((item, index) => ({
-        id: item.id,
-        tourName: item.title,
-        status: index % 2 === 0 ? 'Pending' : 'Approved',
-        touristId: index + 1 // إضافة touristId وهمي
+      // تحويل البيانات الواردة من API إلى التنسيق المطلوب
+      const formattedBookings = data.map(booking => ({
+        id: booking.id,
+        tourName: booking.tripPackage?.title || 'Unknown Tour',
+        status: booking.status,
+        touristId: booking.touristId,
+        touristName: booking.tourist?.name || 'Unknown Tourist',
+        bookingDate: new Date(booking.bookingDate).toLocaleDateString()
       }));
 
-      setBookings(fakeData.filter(booking => booking.status !== 'Pending'));
-      setPendingBookings(fakeData.filter(booking => booking.status === 'Pending'));
+      setBookings(formattedBookings.filter(booking => booking.status !== 'Pending'));
+      setPendingBookings(formattedBookings.filter(booking => booking.status === 'Pending'));
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
@@ -43,22 +47,25 @@ export default function BookingsManagementPage() {
 
   const handleApproveBooking = async (id) => {
     try {
-      // تحديث حالة الحجز عبر الـ API
       const response = await fetch(`${apiUrl}/${id}/approve`, {
         method: 'PUT',
-        headers: headers, // إرسال الـ headers مع الطلب
+        headers: headers,
       });
 
       if (response.ok) {
-        setPendingBookings(pendingBookings.filter(booking => booking.id !== id));
-        const updatedBookings = bookings.map((booking) =>
-          booking.id === id ? { ...booking, status: 'Approved' } : booking
-        );
-        setBookings(updatedBookings);
+        // تحديث الحالة المحلية بعد الموافقة
+        const updatedPending = pendingBookings.filter(booking => booking.id !== id);
+        const approvedBooking = pendingBookings.find(booking => booking.id === id);
+        
+        if (approvedBooking) {
+          approvedBooking.status = 'Approved';
+          setBookings([...bookings, approvedBooking]);
+        }
+        
+        setPendingBookings(updatedPending);
       } else {
         console.error("Error approving booking");
       }
-      console.log("Booking approved:", id);
     } catch (error) {
       console.error("Error approving booking:", error);
     }
@@ -66,22 +73,25 @@ export default function BookingsManagementPage() {
 
   const handleRejectBooking = async (id) => {
     try {
-      // تحديث حالة الحجز عبر الـ API
       const response = await fetch(`${apiUrl}/${id}/reject`, {
         method: 'PUT',
-        headers: headers, // إرسال الـ headers مع الطلب
+        headers: headers,
       });
 
       if (response.ok) {
-        setPendingBookings(pendingBookings.filter(booking => booking.id !== id));
-        const updatedBookings = bookings.map((booking) =>
-          booking.id === id ? { ...booking, status: 'Rejected' } : booking
-        );
-        setBookings(updatedBookings);
+        // تحديث الحالة المحلية بعد الرفض
+        const updatedPending = pendingBookings.filter(booking => booking.id !== id);
+        const rejectedBooking = pendingBookings.find(booking => booking.id === id);
+        
+        if (rejectedBooking) {
+          rejectedBooking.status = 'Rejected';
+          setBookings([...bookings, rejectedBooking]);
+        }
+        
+        setPendingBookings(updatedPending);
       } else {
         console.error("Error rejecting booking");
       }
-      console.log("Booking rejected:", id);
     } catch (error) {
       console.error("Error rejecting booking:", error);
     }
@@ -94,57 +104,67 @@ export default function BookingsManagementPage() {
       {/* عرض الطلبات قيد الانتظار */}
       <div className="pending-bookings">
         <h3 style={{ color: "#1d4ed8" }}>Pending Bookings:</h3>
-        {pendingBookings.map((booking) => (
-          <div key={booking.id} className="booking-card">
-            <h4>Booking ID: {booking.id}</h4>
-            <p>Tour: {booking.tourName}</p>
-            <p>Booking Status: Pending</p>
-            <p>Tourist ID: {booking.touristId}</p> {/* عرض touristId */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
-              <button
-                onClick={() => handleApproveBooking(booking.id)}
-                style={{
-                  padding: '4px 12px',
-                  fontSize: '12px',
-                  backgroundColor: '#22c55e',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => handleRejectBooking(booking.id)}
-                style={{
-                  padding: '4px 12px',
-                  fontSize: '12px',
-                  backgroundColor: '#ef4444',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                Reject
-              </button>
+        {pendingBookings.length > 0 ? (
+          pendingBookings.map((booking) => (
+            <div key={booking.id} className="booking-card">
+              <h4>Booking ID: {booking.id}</h4>
+              <p>Tour: {booking.tourName}</p>
+              <p>Tourist: {booking.touristName}</p>
+              <p>Booking Date: {booking.bookingDate}</p>
+              <p>Booking Status: Pending</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                <button
+                  onClick={() => handleApproveBooking(booking.id)}
+                  style={{
+                    padding: '4px 12px',
+                    fontSize: '12px',
+                    backgroundColor: '#22c55e',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleRejectBooking(booking.id)}
+                  style={{
+                    padding: '4px 12px',
+                    fontSize: '12px',
+                    backgroundColor: '#ef4444',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Reject
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No pending bookings</p>
+        )}
       </div>
 
       {/* عرض جميع الحجوزات */}
       <div className="all-bookings">
         <h3 style={{ color: "#1d4ed8" }}>All Bookings:</h3>
-        {bookings.map((booking) => (
-          <div key={booking.id} className="booking-card">
-            <h4>Booking ID: {booking.id}</h4>
-            <p>Tour: {booking.tourName}</p>
-            <p>Booking Status: {booking.status}</p>
-            <p>Tourist ID: {booking.touristId}</p> {/* عرض touristId */}
-          </div>
-        ))}
+        {bookings.length > 0 ? (
+          bookings.map((booking) => (
+            <div key={booking.id} className="booking-card">
+              <h4>Booking ID: {booking.id}</h4>
+              <p>Tour: {booking.tourName}</p>
+              <p>Tourist: {booking.touristName}</p>
+              <p>Booking Date: {booking.bookingDate}</p>
+              <p>Booking Status: {booking.status}</p>
+            </div>
+          ))
+        ) : (
+          <p>No bookings found</p>
+        )}
       </div>
     </div>
   );

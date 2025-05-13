@@ -126,8 +126,8 @@ export default function TravelAgencyDashboard() {
   // دالة لتسجيل الخروج
   const handleLogout = () => {
     localStorage.removeItem("token"); // مسح التوكن
-    localStorage.removeItem("agencyId"); // مسح agencyId (إذا كنت تخزنه هنا)
-    navigate("/"); // التوجه إلى الصفحة الرئيسية
+    
+    navigate(-1); // التوجه إلى الصفحة الرئيسية
   };
 
   return (

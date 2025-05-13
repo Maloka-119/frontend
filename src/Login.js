@@ -1,93 +1,3 @@
-// import { useState } from "react";
-// import { Link, useNavigate } from 'react-router-dom';
-// import tour from './tour.jpeg';
-// import Orangeback from './Orangeback.jpg';
-// import "./Login.css";
-
-// const Login = () => {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const navigate = useNavigate(); // لإجراء التوجيه بعد تسجيل الدخول
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     setError(""); // Reset error before attempting login
-
-//     try {
-//       const response = await fetch("https://your-api-endpoint.com/login", {  // API endpoint for login
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ email, password })
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         console.log("Login successful", data);
-
-//         // تخزين الـ role في localStorage بعد تسجيل الدخول بنجاح
-//         localStorage.setItem("userRole", data.role);  // assuming the response contains a `role`
-
-//         // بناءً على الـ role، توجيه المستخدم للصفحة المناسبة
-//         if (data.role === 'admin') {
-//           navigate('/admin');
-//         } else if (data.role === 'travel-agency') {
-//           navigate('/travel-agency');
-//         } else if (data.role === 'tourist') {
-//           navigate('/tourist');
-//         }
-//       } else {
-//         setError(data.message || "Login failed");
-//       }
-//     } catch (err) {
-//       setError("Network error, please try again");
-//     }
-//   };
-
-//   return (
-//     <div className="login-containerr" style={{ backgroundImage: `url(${Orangeback})` }}>
-//       <div className="login-boxx">
-//         <h2 className="login-titlee">Welcome to BooknGo</h2>
-//         {error && <p className="error-message">{error}</p>}
-//         <form onSubmit={handleLogin} className="loginform">
-//           <div className="input-groupL">
-//             <label>E-MAIL</label>
-//             <input
-//               type="email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="input-groupL">
-//             <label>PASSWORD</label>
-//             <input
-//               type="password"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <button type="submit" className="login-buttonn">Login</button>
-//         </form>
-//         <div className="forgot-password">
-//           <a href="#">FORGET YOUR PASSWORD?</a>
-//         </div>
-//         {/* Link to create a new account */}
-//         <div className="forgot-password">
-//           <Link to="/new-account" style={{ textDecoration: 'underline' }}>
-//             Don't have an account? Create a new account
-//           </Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
 import { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import Orangeback from './Orangeback.jpg';
@@ -100,62 +10,95 @@ const Login = ({ onLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setIsLoading(true);
+
+  try {
+    const response = await fetch("https://localhost:7050/api/Authentication/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        email: email,
+        password: password 
+      }),
+    });
+
+    // قراءة الاستجابة كنص أولاً
+    const responseText = await response.text();
+    let data = {};
 
     try {
-      const response = await fetch("https://localhost:7050/api/Authentication/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed. Please check your credentials.");
+      // محاولة تحليل النص كـ JSON فقط إذا كان غير فارغ
+      data = responseText ? JSON.parse(responseText) : {};
+    } catch (jsonError) {
+      console.error("Failed to parse JSON:", jsonError);
+      // إذا فشل التحليل ولكن الاستجابة ناجحة (200-299)
+      if (response.ok) {
+        // ربما الخادم يرجع رسالة نصية بسيطة
+        data = { message: responseText };
+      } else {
+        throw new Error(responseText || "Login failed");
       }
-
-      if (!data.token || !data.user || !data.user.role) {
-        throw new Error("Invalid server response structure");
-      }
-
-      // Save user data
-      const token = { tokenValue: data.token };  // هذا هو الكائن الذي يحتوي على التوكن
-      localStorage.setItem("token", JSON.stringify(token)); // تخزين التوكن كـ JSON string
-      localStorage.setItem("userId", data.user.id);
-      localStorage.setItem("userRole", data.user.role);
-      localStorage.setItem("userEmail", data.user.email);
-
-      onLogin({ 
-        id: data.user.id,
-        email: data.user.email,
-        role: data.user.role
-      });
-
-      // Navigation based on role
-      const rolePath = {
-        'admin': '/admin/dashboard',
-        'tourist': '/tourist',
-        'travelagency': '/travel-agency'
-      };
-
-      navigate(rolePath[data.user.role.toLowerCase()] || '/');
-
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.message || "An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
-  };
+
+    if (!response.ok) {
+      // معالجة رسائل الخطأ المختلفة
+      let errorMsg = "Invalid email or password";
+      
+      if (typeof data === 'object' && data !== null) {
+        errorMsg = data.message || 
+                  (data.errors ? Object.values(data.errors).join(' ') : 
+                  "Invalid credentials");
+      } else if (typeof data === 'string') {
+        errorMsg = data;
+      }
+
+      throw new Error(errorMsg);
+    }
+
+    // التحقق من وجود الحقول الأساسية في الاستجابة
+    if (!data.token || !data.userName || !data.roles) {
+      console.warn("Server response:", data);
+      throw new Error("Server response is missing required fields");
+    }
+
+    // التأكد من أن الأدوار هي مصفوفة
+    const rolesArray = Array.isArray(data.roles) ? data.roles : [data.roles];
+
+    // حفظ بيانات المستخدم
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userName", data.userName);
+    localStorage.setItem("userRoles", JSON.stringify(rolesArray));
+    localStorage.setItem("userEmail", email);
+
+    // تحديث حالة التطبيق
+    onLogin({
+      userName: data.userName,
+      email: email,
+      role: rolesArray[0]
+    });
+
+    // تعيين مسارات الأدوار مع تحسين التوافق
+    const roleMap = {
+      admin: "/admin",
+      tourist: "/tourist",
+      travelagency: "/travel-agency",
+      travel_agency: "/travel-agency",
+      "travel agency": "/travel-agency"
+    };
+    
+    const primaryRole = rolesArray[0].toLowerCase().replace(/\s+/g, '_');
+    navigate(roleMap[primaryRole] || "/");
+
+  } catch (err) {
+    console.error("Login error:", err);
+    setError(err.message || "Login failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="login-containerr" style={{ backgroundImage: `url(${Orangeback})` }}>
@@ -213,10 +156,14 @@ const Login = ({ onLogin }) => {
 
 export default Login;
 
+
+
+//last correct
 // import { useState } from "react";
 // import { useNavigate, Link } from 'react-router-dom';
 // import Orangeback from './Orangeback.jpg';
 // import "./Login.css";
+
 // const Login = ({ onLogin }) => {
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
@@ -230,51 +177,55 @@ export default Login;
 //     setIsLoading(true);
 
 //     try {
-//       const response = await fetch("http://localhost:7050/api/authentication/login", {
+//       const response = await fetch("https://localhost:7050/api/Authentication/login", {
 //         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ 
 //           email: email,
-//           password: password
+//           password: password 
 //         }),
 //       });
 
 //       const data = await response.json();
 
 //       if (!response.ok) {
-//         throw new Error(data.message || "Login failed. Please check your credentials.");
+//         // معالجة رسائل الخطأ المختلفة
+//         const errorMsg = data.message || 
+//                         (typeof data === 'string' ? data : "Invalid email or password");
+//         throw new Error(errorMsg);
 //       }
 
-//       if (!data.token || !data.user || !data.user.role) {
+//       // التحقق من وجود الحقول الأساسية في الاستجابة
+//       if (!data.token || !data.userName || !data.roles) {
 //         throw new Error("Invalid server response structure");
 //       }
 
-//       // Save user data
+//       // حفظ بيانات المستخدم في localStorage
 //       localStorage.setItem("token", data.token);
-//       localStorage.setItem("userId", data.user.id);
-//       localStorage.setItem("userRole", data.user.role);
-//       localStorage.setItem("userEmail", data.user.email);
+//       localStorage.setItem("userName", data.userName);
+//       localStorage.setItem("userRoles", JSON.stringify(data.roles));
+//       localStorage.setItem("userEmail", email);
 
-//       onLogin({ 
-//         id: data.user.id,
-//         email: data.user.email,
-//         role: data.user.role
+//       // تحديث حالة التطبيق
+//       onLogin({
+//         userName: data.userName,
+//         email: email,
+//         role: data.roles[0] // نأخذ أول دور من المصفوفة
 //       });
 
-//       // Navigation based on role
-//       const rolePath = {
-//         'admin': '/admin/dashboard',
-//         'tourist': '/tourist/dashboard',
-//         'travelagency': '/agency/dashboard'
+//       // التوجيه حسب الدور الرئيسي
+//       const roleMap = {
+//         admin: "/admin/*",
+//         tourist: "/tourist",
+//         travelagency: "/travel-agency"
 //       };
-
-//       navigate(rolePath[data.user.role.toLowerCase()] || '/');
+      
+//       const primaryRole = data.roles[0].toLowerCase();
+//       navigate(roleMap[primaryRole] || "/");
 
 //     } catch (err) {
 //       console.error("Login error:", err);
-//       setError(err.message || "An unexpected error occurred. Please try again.");
+//       setError(err.message || "An unexpected error occurred during login");
 //     } finally {
 //       setIsLoading(false);
 //     }
@@ -337,186 +288,3 @@ export default Login;
 // export default Login;
 
 
-// بختبر ربط الكود بثوابت ده مش صح طبعا
-
-// import { useState } from "react";
-// import { useNavigate } from 'react-router-dom';
-// import Orangeback from './Orangeback.jpg';
-// import "./Login.css";
-
-// const Login = ({ onLogin }) => {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const navigate = useNavigate();
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     setError("");
-
-//     try {
-//       const response = await fetch("https://your-api-endpoint.com/login", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ email, password }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Invalid username or password");
-//       }
-
-//       const data = await response.json();
-//       const { role, token } = data;
-
-//       localStorage.setItem("token", token);
-//       localStorage.setItem("userRole", role);
-
-//       onLogin({ role });
-
-//       if (role === 'Admin') {
-//         navigate('/admin');
-//       } else if (role === 'TravelAgency') {
-//         navigate('/travel-agency');
-//       } else if (role === 'Tourist') {
-//         navigate('/tourist');
-//       }
-//     } catch (error) {
-//       setError(error.message);
-//     }
-//   };
-
-//   return (
-//     <div className="login-containerr" style={{ backgroundImage: `url(${Orangeback})` }}>
-//       <div className="login-boxx">
-//         <h2 className="login-titlee">Welcome to BooknGo</h2>
-//         {error && <p className="error-message">{error}</p>}
-//         <form onSubmit={handleLogin} className="loginform">
-//           <div className="input-groupL">
-//             <label>E-MAIL</label>
-//             <input
-//               type="email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="input-groupL">
-//             <label>PASSWORD</label>
-//             <input
-//               type="password"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <button type="submit" className="login-buttonn">Login</button>
-//         </form>
-//         <div className="forgot-password">
-//           <a href="/reset-password">FORGET YOUR PASSWORD?</a>
-//         </div>
-//         <div className="forgot-password">
-//           <a href="/new-account" style={{ textDecoration: 'underline' }}>
-//             Don't have an account? Create a new account
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-
-// the real one
-// import { useState } from "react";
-// import { useNavigate } from 'react-router-dom';
-// import Orangeback from './Orangeback.jpg';
-// import "./Login.css";
-
-// const Login = () => {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const navigate = useNavigate();
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     setError(""); // Reset error before attempting login
-
-//     // إرسال البيانات إلى الـ API للتحقق
-//     try {
-//       const response = await fetch("https://your-api-endpoint.com/login", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ email, password }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Invalid username or password");
-//       }
-
-//       const data = await response.json();
-
-//       // استخراج الـ Role من الاستجابة
-//       const { role, token } = data;
-
-//       // تخزين التوكن في الـ LocalStorage
-//       localStorage.setItem("authToken", token);
-
-//       // توجيه المستخدم بناءً على الـ role
-//       if (role === 'admin') {
-//         navigate('/admin');
-//       } else if (role === 'travel-agency') {
-//         navigate('/travel-agency');
-//       } else if (role === 'tourist') {
-//         navigate('/tourist');
-//       }
-//     } catch (error) {
-//       setError(error.message);
-//     }
-//   };
-
-//   return (
-//     <div className="login-containerr" style={{ backgroundImage: `url(${Orangeback})` }}>
-//       <div className="login-boxx">
-//         <h2 className="login-titlee">Welcome to BooknGo</h2>
-//         {error && <p className="error-message">{error}</p>}
-//         <form onSubmit={handleLogin} className="loginform">
-//           <div className="input-groupL">
-//             <label>E-MAIL</label>
-//             <input
-//               type="email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <div className="input-groupL">
-//             <label>PASSWORD</label>
-//             <input
-//               type="password"
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <button type="submit" className="login-buttonn">Login</button>
-//         </form>
-//         <div className="forgot-password">
-//           <a href="#">FORGET YOUR PASSWORD?</a>
-//         </div>
-//         <div className="forgot-password">
-//           <a href="/new-account" style={{ textDecoration: 'underline' }}>
-//             Don't have an account? Create a new account
-//           </a>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;

@@ -12,10 +12,15 @@ const ComplaintsManagement = () => {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-          const storedToken = JSON.parse(localStorage.getItem("token"));
+        // التعديل هنا: جلب التوكن مباشرة كسلسلة نصية بدون تحليل JSON
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+          throw new Error('No token found');
+        }
+
         const res = await fetch('https://localhost:7050/api/AdminDashboard/complaints', {
           headers: {
-            'Authorization': `Bearer ${storedToken.tokenValue.token}`,
+            'Authorization': `Bearer ${storedToken}`,
           },
         });
 
@@ -44,11 +49,16 @@ const ComplaintsManagement = () => {
     }
 
     try {
-       const storedToken = JSON.parse(localStorage.getItem("token"));
+      // التعديل هنا: جلب التوكن مباشرة كسلسلة نصية
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        throw new Error('No token found');
+      }
+
       const res = await fetch(`https://localhost:7050/api/Complaint/${id}/respond`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${storedToken.tokenValue.token}`,
+          'Authorization': `Bearer ${storedToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ response }),
@@ -71,11 +81,16 @@ const ComplaintsManagement = () => {
 
   const handleRequestInfo = async (id) => {
     try {
-       const storedToken = JSON.parse(localStorage.getItem("token"));
+      // التعديل هنا: جلب التوكن مباشرة كسلسلة نصية
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        throw new Error('No token found');
+      }
+
       const res = await fetch(`https://localhost:7050/api/Complaint/${id}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${storedToken.tokenValue.token}`,
+          'Authorization': `Bearer ${storedToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: 'Please provide more details.' }),

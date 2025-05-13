@@ -16,6 +16,7 @@ const ResetPassword = () => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{5,}$/;
     return regex.test(password);
   };
+
   const handleReset = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -48,14 +49,21 @@ const ResetPassword = () => {
         }),
       });
 
-      const data = await response.json();
+      let responseData;
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+      } else {
+        responseData = { message: await response.text() };
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || "Password reset failed");
+        throw new Error(responseData.message || "Password reset failed");
       }
 
       setSuccess(true);
-      setMessage(data.message || "Password has been reset successfully");
+      setMessage(responseData.message || "Password has been reset successfully");
 
       setTimeout(() => {
         navigate("/login");

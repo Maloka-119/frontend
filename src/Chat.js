@@ -25,13 +25,13 @@ const Chat = () => {
   const [selectedTourist, setSelectedTourist] = useState(null);
 
   // الحصول على التوكن من الـ localStorage
-  const token = JSON.parse(localStorage.getItem('token'));
-  
-  // إعداد الـ headers مع التوكن
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token.tokenValue.token}`,  // إضافة التوكن في الـ headers
-  };
+const token = localStorage.getItem('token');
+
+// إعداد الـ headers مع التوكن
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': token ? `Bearer ${token}` : '',
+};
 
   useEffect(() => {
     socketRef.current = io('http://localhost:5000');
@@ -41,8 +41,8 @@ const Chat = () => {
   useEffect(() => {
     const fetchTourists = async () => {
       try {
-        // استخدام axios لجلب بيانات السياح من الـ API مع التوكن في الـ headers
-        const res = await axios.get('https://jsonplaceholder.typicode.com/users', { headers });
+        // استبدل هذا بالـ API الحقيقي الخاص بك لجلب السياح
+        const res = await axios.get('https://localhost:7050/api/Message/conversations', { headers });
         setTourists(res.data);
 
         if (touristId) {
@@ -53,6 +53,10 @@ const Chat = () => {
             setUserName(`Tourist ${touristId}`);
             const room = getRoomId(agencyId, tourist.id);
             setRoomId(room);
+            
+            // جلب سجل المحادثة عند تحديد سائح
+            const historyRes = await axios.get(`https://localhost:7050/api/Message/history/${tourist.id}`, { headers });
+            setMessages(historyRes.data);
           }
         }
       } catch (err) {
@@ -85,28 +89,50 @@ const Chat = () => {
     };
   }, [roomId]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message.trim()) return;
-    const newMessage = { roomId, sender: userName, message };
-    socketRef.current.emit('sendMessage', newMessage);
-    setMessages(prev => [...prev, newMessage]);
-    setMessage('');
+    const newMessage = { 
+      roomId, 
+      sender: userName, 
+      message,
+      touristId: selectedTourist?.id,
+      agencyId
+    };
+
+    try {
+      // إرسال الرسالة عبر السوكيت
+      socketRef.current.emit('sendMessage', newMessage);
+      
+      // إرسال الرسالة إلى API الخاص بك لحفظها
+      await axios.post('https://localhost:7050/api/Message/send', newMessage, { headers });
+      
+      setMessages(prev => [...prev, newMessage]);
+      setMessage('');
+    } catch (err) {
+      console.error('Error sending message:', err);
+    }
   };
 
   const handleTyping = () => {
     socketRef.current.emit('typing', roomId, userName);
   };
 
-  const handleSelectTourist = tourist => {
+  const handleSelectTourist = async (tourist) => {
     setSelectedTourist(tourist);
     const room = getRoomId(agencyId, tourist.id);
     setRoomId(room);
-    setMessages([]);
     socketRef.current.emit('joinRoom', room);
+
+    try {
+      // جلب سجل المحادثة عند اختيار سائح
+      const res = await axios.get(`https://localhost:7050/api/Message/history/${tourist.id}`, { headers });
+      setMessages(res.data);
+    } catch (err) {
+      console.error('Error fetching chat history:', err);
+    }
 
     localStorage.setItem('selectedTourist', JSON.stringify(tourist));
     localStorage.setItem('roomId', room);
-
     socketRef.current.emit('startChat', room);
   };
 

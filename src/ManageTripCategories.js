@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './ManageTripCategories.css';
 import Categoryman from './Categoryman.jpg';
-import BackiconAdmin from './BackiconAdmin.jpg';
 
 const ManageTripCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -17,10 +16,10 @@ const ManageTripCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const storedToken = JSON.parse(localStorage.getItem("token"));
+      const storedToken = localStorage.getItem("token");
       const response = await fetch("https://localhost:7050/api/TripCategory", {
         headers: {
-          "Authorization": `Bearer ${storedToken.tokenValue.token}`,
+          "Authorization": `Bearer ${storedToken}`,
           "Content-Type": "application/json"
         }
       });
@@ -37,7 +36,7 @@ const ManageTripCategories = () => {
       const data = await response.json();
       setCategories(data);
     } catch (err) {
-      setError(err.message.includes('Failed to fetch') 
+      showError(err.message.includes('Failed to fetch') 
         ? "Cannot connect to server. Please check your connection."
         : err.message);
     } finally {
@@ -45,66 +44,91 @@ const ManageTripCategories = () => {
     }
   };
 
+  const showError = (message) => {
+    setError(message);
+    setTimeout(() => setError(""), 3000);
+  };
+
+  const showFormError = (message) => {
+    setFormError(message);
+    setTimeout(() => setFormError(""), 3000);
+  };
+
   const handleCreateCategory = async () => {
     if (!newCategory.name || !newCategory.description) {
-      setFormError("Please fill in all fields.");
+      showFormError("Please fill in all fields");
+      return;
+    }
+
+    // تحقق من وجود الفئة قبل الإضافة
+    const categoryExists = categories.some(
+      (category) => category.name.toLowerCase() === newCategory.name.toLowerCase()
+    );
+    if (categoryExists) {
+      showFormError("Category already exists");
       return;
     }
 
     try {
-      const storedToken = JSON.parse(localStorage.getItem("token"));
+      const storedToken = localStorage.getItem("token");
       const response = await fetch("https://localhost:7050/api/TripCategory", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${storedToken.tokenValue.token}`,
+          "Authorization": `Bearer ${storedToken}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify({
+          Name: newCategory.name,
+          Description: newCategory.description
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error creating category:", errorData);
-        throw new Error(`HTTP error! status: ${response.status}, ${JSON.stringify(errorData)}`);
+        throw new Error(` ${response.status}`);
       }
 
-      // قم بإعادة جلب الفئات من الخادم بعد إضافة الفئة الجديدة
       await fetchCategories();
-
       setNewCategory({ name: "", description: "" });
-      setFormError("");
     } catch (err) {
-      setFormError(err.message || "Failed to create category.");
+      showFormError(err.message || "Failed to create category.");
     }
   };
 
   const handleUpdateCategory = async () => {
     if (!editingCategory) return;
 
+    if (!newCategory.name || !newCategory.description) {
+      showFormError("Please fill in all fields");
+      return;
+    }
+
     try {
-      const storedToken = JSON.parse(localStorage.getItem("token"));
+      const storedToken = localStorage.getItem("token");
       const response = await fetch(`https://localhost:7050/api/TripCategory/${editingCategory.id}`, {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${storedToken.tokenValue.token}`,
+          "Authorization": `Bearer ${storedToken}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify({
+          Name: newCategory.name,
+          Description: newCategory.description
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error updating category:", errorData);
-        throw new Error(`HTTP error! status: ${response.status}, ${JSON.stringify(errorData)}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // قم بإعادة جلب الفئات من الخادم بعد تعديل الفئة
       await fetchCategories();
-
       setEditingCategory(null);
       setNewCategory({ name: "", description: "" });
     } catch (err) {
-      setError(err.message || "Failed to update category.");
+      showError(err.message || "Failed to update category.");
     }
   };
 
@@ -112,24 +136,25 @@ const ManageTripCategories = () => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
 
     try {
-      const storedToken = JSON.parse(localStorage.getItem("token"));
+      const storedToken = localStorage.getItem("token");
       const response = await fetch(`https://localhost:7050/api/TripCategory/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${storedToken.tokenValue.token}`,
+          "Authorization": `Bearer ${storedToken}`,
         }
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error deleting category:", errorData);
-        throw new Error(`HTTP error! status: ${response.status}, ${JSON.stringify(errorData)}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // قم بإعادة جلب الفئات من الخادم بعد الحذف
-      await fetchCategories();
+      // حذف العنصر من الواجهة بدون انتظار إعادة تحميل
+      setCategories(prev => prev.filter(cat => cat.id !== id));
+
     } catch (err) {
-      setError(err.message || "Failed to delete category.");
+      showError(err.message || "Failed to delete category.");
     }
   };
 
@@ -217,5 +242,3 @@ const ManageTripCategories = () => {
 };
 
 export default ManageTripCategories;
-
-
