@@ -14,45 +14,70 @@ const MonitorBookings = () => {
   });
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchBookingsWithDetails = async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
           throw new Error('Authentication required');
         }
 
-        const response = await fetch('https://localhost:7050/api/Booking', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        // جلب بيانات الحجوزات
+        const bookingsResponse = await fetch('https://localhost:7050/api/Booking', {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!response.ok) {
-          if (response.status === 401) {
+        if (!bookingsResponse.ok) {
+          if (bookingsResponse.status === 401) {
             throw new Error('Unauthorized access. Please login again.');
-          } else if (response.status === 403) {
+          } else if (bookingsResponse.status === 403) {
             throw new Error('You do not have permission to view bookings.');
           } else {
             throw new Error('Failed to fetch bookings.');
           }
         }
 
-        const data = await response.json();
-        
-        // Transform data to match frontend structure
-        const transformedData = data.map(booking => ({
-          id: booking.Id,
-          touristName: booking.Tourist?.Username || 'Unknown',
-          tripName: booking.TripPackage?.Name || 'Unknown Package',
-          date: booking.BookingDate,
-          status: booking.Status.toLowerCase() // Normalize status to lowercase
-        }));
+        const bookingsData = await bookingsResponse.json();
 
-        setBookings(transformedData);
+        // جلب بيانات كل سائح ورحلة بشكل منفصل
+        const bookingsWithDetails = await Promise.all(
+          bookingsData.map(async (booking) => {
+            try {
+              const [touristResponse, tripResponse] = await Promise.all([
+                fetch(`https://localhost:7050/api/Tourist/${booking.touristId}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                }),
+                fetch(`https://localhost:7050/api/TripPackage/${booking.tourPackageId}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                }),
+              ]);
+
+              const tourist = touristResponse.ok ? await touristResponse.json() : null;
+              const tripPackage = tripResponse.ok ? await tripResponse.json() : null;
+
+              return {
+                id: booking.id,
+                touristName: tourist?.username || `Tourist #${booking.touristId}`,
+                tripName: tripPackage?.name || `Trip #${booking.tourPackageId}`,
+                date: booking.bookingDate,
+                status: booking.status.toLowerCase()
+              };
+            } catch (err) {
+              console.error('Error fetching details for booking', booking.id, err);
+              return {
+                id: booking.id,
+                touristName: `Tourist #${booking.touristId}`,
+                tripName: `Trip #${booking.tourPackageId}`,
+                date: booking.bookingDate,
+                status: booking.status.toLowerCase()
+              };
+            }
+          })
+        );
+
+        setBookings(bookingsWithDetails);
       } catch (err) {
         setError(err.message);
         if (err.message.includes('Unauthorized') || err.message.includes('permission')) {
-          // Redirect to login if unauthorized
           navigate('/login');
         }
       } finally {
@@ -60,7 +85,7 @@ const MonitorBookings = () => {
       }
     };
 
-    fetchBookings();
+    fetchBookingsWithDetails();
   }, [navigate]);
 
   const filteredBookings = bookings.filter((booking) => {
@@ -114,8 +139,8 @@ const MonitorBookings = () => {
           <thead>
             <tr>
               <th>Booking ID</th>
-              <th>Tourist Name</th>
-              <th>Trip</th>
+              <th>Tourist ID</th>
+              <th>Trip ID</th>
               <th>Date</th>
               <th>Status</th>
             </tr>

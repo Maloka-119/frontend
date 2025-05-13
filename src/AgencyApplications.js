@@ -110,7 +110,7 @@ const PendingTours = () => {
               <tr>
                 <th>Tour ID</th>
                 <th>Title</th>
-                <th>Agency Name</th>
+                <th>Agency ID</th>
                 <th>Destination</th>
                 <th>Price</th>
                 <th>Duration (Days)</th>
@@ -123,7 +123,7 @@ const PendingTours = () => {
                 <tr key={tour.id}>
                   <td>{tour.id}</td>
                   <td>{tour.title}</td>
-                  <td>{tour.travelAgencyName || `Agency ${tour.travelAgencyId}`}</td>
+                  <td>{tour.travelAgencyName || `Agency #${tour.travelAgencyId}`}</td>
                   <td>{tour.destination}</td>
                   <td>{tour.price}</td>
                   <td>{tour.durationDays}</td>
