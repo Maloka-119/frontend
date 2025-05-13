@@ -28,15 +28,16 @@ h2 {
   text-align: center;
 }
 
+
 .categories-table {
   width: 85%;
   border-collapse: collapse;
-  margin-top: 20px;
-  background-color: rgba(255, 255, 255, 0.6); /* خففنا الأبيض */
+  margin: 20px auto 0 auto; 
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: #333;
-  overflow: hidden;
+  overflow: hidden;
 }
 
 .categories-table td {

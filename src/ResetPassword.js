@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ResetPassword.css"
-import restpassbackgr from './restpassbackgr.jpg'
+import "./ResetPassword.css";
+import restpassbackgr from './restpassbackgr.jpg';
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -9,37 +9,73 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
-    return password.length >= 8;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{5,}$/;
+    return regex.test(password);
   };
 
-  const handleReset = (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
     setMessage("");
+    setIsLoading(true);
 
     if (!validatePassword(newPassword)) {
       setSuccess(false);
-      setMessage("Password must be at least 8 characters");
+      setMessage("Password must contain at least 5 characters, one uppercase letter, one number, and one special character.");
+      setIsLoading(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setSuccess(false);
       setMessage("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
-    // مكان API call
-    // sendResetRequest(email, newPassword);
+    try {
+      const response = await fetch("https://localhost:7050/api/User/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          newPassword,
+          confirmPassword
+        }),
+      });
 
-    setSuccess(true);
-    setMessage("Password has been reset");
+      let responseData;
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+      } else {
+        responseData = { message: await response.text() };
+      }
 
-    setTimeout(() => {
-      navigate("/login"); // لو عندك صفحة login
-    }, 2000);
+      if (!response.ok) {
+        throw new Error(responseData.message || "Password reset failed");
+      }
+
+      setSuccess(true);
+      setMessage(responseData.message || "Password has been reset successfully");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+
+    } catch (err) {
+      setSuccess(false);
+      setMessage(err.message || "An error occurred during password reset");
+      console.error("Reset password error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -55,12 +91,13 @@ const ResetPassword = () => {
 
         <form onSubmit={handleReset} className="loginform">
           <div className="input-groupL">
-            <label>your E-mail</label>
+            <label>Your E-mail</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -71,6 +108,7 @@ const ResetPassword = () => {
               required
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -81,11 +119,16 @@ const ResetPassword = () => {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
-          <button type="submit" className="login-buttonn">
-            Save New Password
+          <button 
+            type="submit" 
+            className="login-buttonn"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Processing...' : 'Save New Password'}
           </button>
         </form>
       </div>
@@ -94,4 +137,3 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
-

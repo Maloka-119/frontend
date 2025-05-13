@@ -1,221 +1,3 @@
-// the real one
-
-// import AgenBackicon from './AgenBackicon.jpg';
-// import React, { useState, useEffect } from 'react';
-// import './TourManagement.css';
-// import TourAgenMan from './TourAgenMan.jpg';
-
-// export default function TourManagementPage() {
-//   const [tours, setTours] = useState([]);
-//   const [newTour, setNewTour] = useState({
-//     destination: '',
-//     price: '',
-//     itinerary: '',
-//     duration: '',
-//     availableSeats: '',
-//     active: true,
-//   });
-//   const [editTour, setEditTour] = useState(null);
-
-//   const apiUrl = "https://your-api-endpoint.com/tours"; // استبدل بـ URL الـ API الحقيقي
-
-//   // جلب البيانات من الـ API الحقيقي
-//   const fetchTours = async () => {
-//     try {
-//       const response = await fetch(apiUrl);
-//       const data = await response.json();
-//       setTours(data);
-//     } catch (error) {
-//       console.error("Error fetching tours:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchTours();
-//   }, []);
-
-//   const handleAddTour = async (e) => {
-//     e.preventDefault();
-
-//     const requestOptions = {
-//       method: editTour ? 'PUT' : 'POST', // PUT لتعديل و POST لإضافة
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(newTour),
-//     };
-
-//     try {
-//       let response;
-//       if (editTour) {
-//         response = await fetch(`${apiUrl}/${editTour.id}`, requestOptions);
-//       } else {
-//         response = await fetch(apiUrl, requestOptions);
-//       }
-      
-//       const result = await response.json();
-//       if (editTour) {
-//         const updatedTours = tours.map((tour) =>
-//           tour.id === editTour.id ? { ...tour, ...newTour } : tour
-//         );
-//         setTours(updatedTours);
-//         setEditTour(null);
-//       } else {
-//         setTours([...tours, result]);
-//       }
-
-//       setNewTour({
-//         destination: '',
-//         price: '',
-//         itinerary: '',
-//         duration: '',
-//         availableSeats: '',
-//         active: true,
-//       });
-
-//     } catch (error) {
-//       console.error("Error adding/updating tour:", error);
-//     }
-//   };
-
-//   const handleEditTour = (tour) => {
-//     setEditTour(tour);
-//     setNewTour({
-//       destination: tour.destination,
-//       price: tour.price,
-//       itinerary: tour.itinerary,
-//       duration: tour.duration,
-//       availableSeats: tour.availableSeats,
-//       active: tour.active,
-//     });
-//   };
-
-//   const handleDeleteTour = async (id) => {
-//     try {
-//       const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-//       if (response.ok) {
-//         setTours(tours.filter((tour) => tour.id !== id));
-//       }
-//     } catch (error) {
-//       console.error("Error deleting tour:", error);
-//     }
-//   };
-
-//   const toggleTourStatus = async (id, currentStatus) => {
-//     try {
-//       const updatedTour = { ...tours.find(tour => tour.id === id), active: !currentStatus };
-//       const response = await fetch(`${apiUrl}/${id}`, {
-//         method: 'PUT',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(updatedTour),
-//       });
-//       const result = await response.json();
-
-//       setTours(tours.map((tour) =>
-//         tour.id === id ? result : tour
-//       ));
-//     } catch (error) {
-//       console.error("Error updating tour status:", error);
-//     }
-//   };
-
-//   return (
-//     <div className="tour-management-container" style={{ backgroundImage: `url(${TourAgenMan})` }}>
-//       <h2>Tour Management</h2>
-
-//       {/* إضافة أو تعديل رحلة جديدة */}
-//       <form onSubmit={handleAddTour}>
-//         <h3>{editTour ? 'Edit Tour' : 'Add New Tour'}</h3>
-//         <label>
-//           Destination:
-//           <input
-//             type="text"
-//             value={newTour.destination}
-//             onChange={(e) => setNewTour({ ...newTour, destination: e.target.value })}
-//           />
-//         </label>
-//         <label>
-//           Price:
-//           <input
-//             type="number"
-//             value={newTour.price}
-//             onChange={(e) => setNewTour({ ...newTour, price: e.target.value })}
-//           />
-//         </label>
-//         <label>
-//           Itinerary:
-//           <input
-//             type="text"
-//             value={newTour.itinerary}
-//             onChange={(e) => setNewTour({ ...newTour, itinerary: e.target.value })}
-//           />
-//         </label>
-//         <label>
-//           Duration:
-//           <input
-//             type="text"
-//             value={newTour.duration}
-//             onChange={(e) => setNewTour({ ...newTour, duration: e.target.value })}
-//           />
-//         </label>
-//         <label>
-//           Available Seats:
-//           <input
-//             type="number"
-//             value={newTour.availableSeats}
-//             onChange={(e) => setNewTour({ ...newTour, availableSeats: e.target.value })}
-//           />
-//         </label>
-//         <button type="submit">{editTour ? 'Update Tour' : 'Add Tour'}</button>
-//       </form>
-
-//       {/* عرض الرحلات */}
-//       <div className="tour-list">
-//         {tours.map((tour) => (
-//           <div key={tour.id} className="tour-card">
-//             {/* زر التبديل لتحديد الحالة */}
-//             <label className="flex items-center cursor-pointer">
-//               <div className="relative">
-//                 <input
-//                   type="checkbox"
-//                   className="sr-only"
-//                   checked={tour.active}
-//                   onChange={() => toggleTourStatus(tour.id, tour.active)}
-//                 />
-//                 <div className="block">
-//                   <span className="status-text">
-//                     {tour.active ? "On" : "Off"}
-//                   </span>
-//                 </div>
-//                 <div
-//                   className={`dot ${tour.active ? "translate-x-full bg-green-500" : ""}`}
-//                 ></div>
-//               </div>
-//             </label>
-
-//             <h3>{tour.title}</h3>
-//             <p>Destination: {tour.destination}</p>
-//             <p>Price: ${tour.price}</p>
-//             <p>Duration: {tour.duration} days</p>
-//             <p>Available Seats: {tour.availableSeats}</p>
-//             <p>Status: {tour.active ? "Available" : "Unavailable"}</p>
-
-//             <button className="edit-button" onClick={() => handleEditTour(tour)}>Edit</button>
-//             <button className="delete-button" onClick={() => handleDeleteTour(tour.id)}>Delete</button>
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Icon link to home page */}
-//       <a href="/travel-agency" className="home-icon-link">
-//         <img src={AgenBackicon} alt="Home" className="home-icon" />
-//       </a>
-//     </div>
-//   );
-// }
-
-
-
-//test
-
 import AgenBackicon from './AgenBackicon.jpg';
 import React, { useState, useEffect } from 'react';
 import './TourManagement.css';
@@ -224,33 +6,80 @@ import TourAgenMan from './TourAgenMan.jpg';
 export default function TourManagementPage() {
   const [tours, setTours] = useState([]);
   const [newTour, setNewTour] = useState({
+    tripId: 0,
+    title: '',
+    description: '',
+    tripCategoryId: 0,
     destination: '',
-    price: '',
-    itinerary: '',
-    duration: '',
-    availableSeats: '',
-    active: true, // إضافة حالة الرحلة
+    price: 0,
+    durationDays: 0,
+    startDate: '',
+    endDate: '',
+    travelAgencyId: 0,
+    availableSeats: 0,
+    status: 'active',
   });
   const [editTour, setEditTour] = useState(null);
 
-  // API وهمي للتجربة
-  const apiUrl = "https://jsonplaceholder.typicode.com/posts";
+  const apiUrl = "https://localhost:7050/api/TripPackage";
 
-  // جلب البيانات من الـ API الوهمي
+  // استخراج التوكن
+  const getToken = () => localStorage.getItem('token');
+
+  // جلب travelAgencyId من الـ API
+  const fetchAgencyId = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch("https://localhost:7050/api/Agency/GetByToken", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch agency ID");
+
+      const data = await response.json();
+      localStorage.setItem('travelAgencyId', data.agencyId);
+      return data.agencyId;
+    } catch (error) {
+      console.error("Error fetching agency ID:", error);
+      alert("Error fetching agency ID. Please login again.");
+      return null;
+    }
+  };
+
+  // استخراج التوكن و travelAgencyId
+  const getAuthHeaders = async () => {
+    const token = getToken();
+    let travelAgencyId = localStorage.getItem('travelAgencyId');
+
+    if (!travelAgencyId) {
+      travelAgencyId = await fetchAgencyId();
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'TravelAgencyId': travelAgencyId,
+    };
+  };
+
+  // Fetch tours from the API
   const fetchTours = async () => {
     try {
-      const response = await fetch(apiUrl);
+      const headers = await getAuthHeaders();
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers,
+      });
       const data = await response.json();
-      setTours(data.map((item) => ({
-        id: item.id,
-        title: item.title,
-        destination: "Sample Destination",
-        price: 100,
-        availableSeats: 25,
-        active: true, // إضافة الحالة هنا
-      })));
+      console.log("Fetched Data: ", data);
+      setTours(data);
     } catch (error) {
       console.error("Error fetching tours:", error);
+      alert("Error fetching tours from the server.");
     }
   };
 
@@ -258,146 +87,142 @@ export default function TourManagementPage() {
     fetchTours();
   }, []);
 
-  const handleAddTour = (e) => {
+  const handleAddTour = async (e) => {
     e.preventDefault();
-    if (editTour) {
-      const updatedTours = tours.map((tour) =>
-        tour.id === editTour.id ? { ...tour, ...newTour } : tour
-      );
-      setTours(updatedTours);
-      setEditTour(null);
-    } else {
-      const newTourWithId = { ...newTour, id: tours.length + 1 };
-      setTours([...tours, newTourWithId]);
+    const travelAgencyId = await fetchAgencyId();
+    if (!travelAgencyId) return;
+
+    const tourData = { ...newTour, travelAgencyId: parseInt(travelAgencyId) };
+
+    if (!tourData.title || !tourData.destination || tourData.price <= 0) {
+      alert("Please fill in all required fields.");
+      return;
     }
-    setNewTour({
-      destination: '',
-      price: '',
-      itinerary: '',
-      duration: '',
-      availableSeats: '',
-      active: true, // إعادة تعيين الحالة
-    });
+
+    try {
+      const headers = await getAuthHeaders();
+      const requestOptions = {
+        method: editTour ? 'PUT' : 'POST',
+        headers,
+        body: JSON.stringify(tourData),
+      };
+
+      let response;
+      if (editTour) {
+        response = await fetch(`${apiUrl}/${editTour.tripId}`, requestOptions);
+      } else {
+        response = await fetch(apiUrl, requestOptions);
+      }
+
+      if (!response.ok) {
+        const result = await response.json();
+        alert(`Failed to add/update tour: ${result.message || "Unknown error"}`);
+        return;
+      }
+
+      alert("Tour added/updated successfully!");
+      await fetchTours();
+      setNewTour({
+        tripId: 0,
+        title: '',
+        description: '',
+        tripCategoryId: 0,
+        destination: '',
+        price: 0,
+        durationDays: 0,
+        startDate: '',
+        endDate: '',
+        travelAgencyId: 0,
+        availableSeats: 0,
+        status: 'active',
+      });
+      setEditTour(null);
+
+    } catch (error) {
+      console.error("Error adding/updating tour:", error);
+      alert("Failed to add/update the tour. Please try again.");
+    }
   };
 
   const handleEditTour = (tour) => {
     setEditTour(tour);
-    setNewTour({
-      destination: tour.destination,
-      price: tour.price,
-      itinerary: tour.itinerary,
-      duration: tour.duration,
-      availableSeats: tour.availableSeats,
-      active: tour.active, // الحفاظ على الحالة
-    });
+    setNewTour({ ...tour });
   };
 
-  const handleDeleteTour = (id) => {
-    const updatedTours = tours.filter((tour) => tour.id !== id);
-    setTours(updatedTours);
+  const handleDeleteTour = async (tripId) => {
+    try {
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${apiUrl}/${tripId}`, {
+        method: 'DELETE',
+        headers,
+      });
+      if (response.ok) {
+        setTours(tours.filter((tour) => tour.tripId !== tripId));
+      } else {
+        alert("Failed to delete tour.");
+      }
+    } catch (error) {
+      console.error("Error deleting tour:", error);
+      alert("Error deleting tour.");
+    }
   };
 
-  const toggleTourStatus = (id, currentStatus) => {
-    const updatedTours = tours.map((tour) =>
-      tour.id === id ? { ...tour, active: !currentStatus } : tour
-    );
-    setTours(updatedTours);
+  const toggleTourStatus = async (tripId, currentStatus) => {
+    try {
+      const headers = await getAuthHeaders();
+      const updatedTour = { ...tours.find((tour) => tour.tripId === tripId), status: currentStatus === 'active' ? 'inactive' : 'active' };
+      const response = await fetch(`${apiUrl}/${tripId}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(updatedTour),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setTours(tours.map((tour) => (tour.tripId === tripId ? result : tour)));
+      } else {
+        alert("Failed to update tour status.");
+      }
+    } catch (error) {
+      console.error("Error updating tour status:", error);
+    }
   };
 
   return (
     <div className="tour-management-container" style={{ backgroundImage: `url(${TourAgenMan})` }}>
       <h2>Tour Management</h2>
-
-      {/* إضافة أو تعديل رحلة جديدة */}
-      <form className='formtm' onSubmit={handleAddTour}>
+      <form onSubmit={handleAddTour}>
         <h3>{editTour ? 'Edit Tour' : 'Add New Tour'}</h3>
-        <label>
-          Destination:
-          <input
-            type="text"
-            value={newTour.destination}
-            onChange={(e) => setNewTour({ ...newTour, destination: e.target.value })}
-          />
-        </label>
-        <label>
-          Price:
-          <input
-            type="number"
-            value={newTour.price}
-            onChange={(e) => setNewTour({ ...newTour, price: e.target.value })}
-          />
-        </label>
-        <label>
-          Itinerary:
-          <input
-            type="text"
-            value={newTour.itinerary}
-            onChange={(e) => setNewTour({ ...newTour, itinerary: e.target.value })}
-          />
-        </label>
-        <label>
-          Duration:
-          <input
-            type="text"
-            value={newTour.duration}
-            onChange={(e) => setNewTour({ ...newTour, duration: e.target.value })}
-          />
-        </label>
-        <label>
-          Available Seats:
-          <input
-            type="number"
-            value={newTour.availableSeats}
-            onChange={(e) => setNewTour({ ...newTour, availableSeats: e.target.value })}
-          />
-        </label>
+        {['title', 'destination', 'description', 'price', 'tripCategoryId', 'durationDays', 'availableSeats', 'startDate', 'endDate', 'travelAgencyId'].map((field) => (
+          <label key={field}>
+            {field.charAt(0).toUpperCase() + field.slice(1)}:
+            <input
+              type={['price', 'tripCategoryId', 'durationDays', 'availableSeats', 'travelAgencyId'].includes(field) ? 'number' : field.includes('Date') ? 'date' : 'text'}
+              value={newTour[field]}
+              onChange={(e) => setNewTour({ ...newTour, [field]: e.target.value })}
+            />
+          </label>
+        ))}
         <button type="submit">{editTour ? 'Update Tour' : 'Add Tour'}</button>
       </form>
 
-      {/* عرض الرحلات */}
       <div className="tour-list">
         {tours.map((tour) => (
-          <div key={tour.id} className="tour-card">
-            {/* زر التبديل لتحديد الحالة */}
-            <label className="flex items-center cursor-pointer">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={tour.active}
-                  onChange={() => toggleTourStatus(tour.id, tour.active)}
-                />
-                <div className="block">
-                  <span className="status-text">
-                    {tour.active ? "On" : "Off"}
-                  </span>
-                </div>
-                <div
-                  className={`dot ${tour.active ? "translate-x-full bg-green-500" : ""}`}
-                ></div>
-              </div>
-            </label>
-
-            <h3>{tour.title}</h3>
-            <p>Destination: {tour.destination}</p>
-            <p>Price: ${tour.price}</p>
-            <p>Duration: {tour.duration} days</p>
-            <p>Available Seats: {tour.availableSeats}</p>
-            <p>Status: {tour.active ? "Available" : "Unavailable"}</p>
-
-            <button className="edit-button" onClick={() => handleEditTour(tour)}>Edit</button>
-            <button className="delete-button" onClick={() => handleDeleteTour(tour.id)}>Delete</button>
+          <div key={tour.tripId} className="tour-card">
+            <h3>{tour.title ?? "No Title"}</h3>
+            <p>Destination: {tour.destination ?? "Not Specified"}</p>
+            <p>Price: ${tour.price ?? "N/A"}</p>
+            <p>Duration: {tour.durationDays ? `${tour.durationDays} days` : "N/A"}</p>
+            <p>Available Seats: {tour.availableSeats ?? "N/A"}</p>
+            <p>Status: {tour.status}</p>
+            <button onClick={() => handleEditTour(tour)}>Edit</button>
+            <button onClick={() => handleDeleteTour(tour.tripId)}>Delete</button>
+            <button onClick={() => toggleTourStatus(tour.tripId, tour.status)}>
+              {tour.status === 'active' ? "Deactivate" : "Activate"}
+            </button>
           </div>
         ))}
       </div>
-
-      {/* Icon link to home page */}
-      <a href="/travel-agency" className="home-icon-link">
-        <img src={AgenBackicon} alt="Home" className="home-icon" />
-      </a>
     </div>
   );
 }
-
-
-

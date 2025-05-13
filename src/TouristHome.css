@@ -1,4 +1,4 @@
-/* Global Styles */
+Global Styles
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4; /* Light grey background */
@@ -9,10 +9,19 @@ body {
 
 /* Tourist Home Container */
 .touristhome-container {
-    background-size: cover;
-    background-position: center;
-    height: 300px;
-    filter: brightness(60%); /* Darken background image */
+  padding: 20px;
+  background: repeat-y center center fixed;
+  background-size: cover;
+  border-radius: 8px;
+  max-width: 100%;
+  margin: 0 auto;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Header Styles */
@@ -437,4 +446,8 @@ body {
     background-color: #f57c00;
   }
   
+  
+
+
+
   

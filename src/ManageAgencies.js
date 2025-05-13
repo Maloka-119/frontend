@@ -1,351 +1,374 @@
-// the real ne
-
-// import React, { useEffect, useState } from "react";
-// import './ManageAgencies.css';
-// import Aganceman from './Aganceman.jpg';
-// import BackiconAdmin from './BackiconAdmin.jpg';
-
-// const ManageAgencies = () => {
-//   const [agencies, setAgencies] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-//   const [newAgency, setNewAgency] = useState({ name: "", email: "" });
-//   const [formError, setFormError] = useState("");
-
-//   const apiUrl = "YOUR_BACKEND_API_URL"; // استبدل بهذه الرابط الصحيح للـ API
-
-//   useEffect(() => {
-//     const fetchAgencies = async () => {
-//       try {
-//         const response = await fetch(`${apiUrl}/agencies`);
-//         const data = await response.json();
-//         setAgencies(data);
-//       } catch (err) {
-//         setError("Failed to fetch agencies.");
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchAgencies();
-//   }, []);
-
-//   const handleAction = async (id, action) => {
-//     try {
-//       const url = `${apiUrl}/agencies/${id}`;
-//       const method = action === "delete" ? "DELETE" : "PUT";
-//       const body = action !== "delete" ? JSON.stringify({ status: action }) : null;
-
-//       const response = await fetch(url, {
-//         method: method,
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: body,
-//       });
-
-//       if (response.ok) {
-//         if (action === "delete") {
-//           setAgencies(agencies.filter((agency) => agency.id !== id));
-//         } else {
-//           const updatedAgencies = agencies.map((agency) =>
-//             agency.id === id ? { ...agency, status: action } : agency
-//           );
-//           setAgencies(updatedAgencies);
-//         }
-//       } else {
-//         setError("Failed to update agency status.");
-//       }
-//     } catch (err) {
-//       setError("Network error. Please try again.");
-//       console.error(err);
-//     }
-//   };
-
-//   const handleCreateAgency = async () => {
-//     if (!newAgency.name || !newAgency.email) {
-//       setFormError("Please fill in all fields.");
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch(`${apiUrl}/agencies`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(newAgency),
-//       });
-
-//       if (response.ok) {
-//         const createdAgency = await response.json();
-//         setAgencies([...agencies, createdAgency]);
-//         setNewAgency({ name: "", email: "" });
-//         setFormError("");
-//       } else {
-//         setFormError("Failed to create agency.");
-//       }
-//     } catch (err) {
-//       setFormError("Network error. Please try again.");
-//       console.error(err);
-//     }
-//   };
-
-//   return (
-//     <div className="manage-agencies-container" style={{ backgroundImage: `url(${Aganceman})` }} >
-//       <h2 style={{color:"white"}}>Manage Agencies</h2>
-
-//       <div className="create-agency-form">
-//         <h3 style={{color:"white"}}>Create New Agency</h3>
-//         {formError && <p className="error-message">{formError}</p>}
-//         <input
-//           type="text"
-//           placeholder="Agency Name"
-//           value={newAgency.name}
-//           onChange={(e) => setNewAgency({ ...newAgency, name: e.target.value })}
-//         />
-//         <input
-//           type="email"
-//           placeholder="Agency Email"
-//           value={newAgency.email}
-//           onChange={(e) => setNewAgency({ ...newAgency, email: e.target.value })}
-//         />
-//         <button onClick={handleCreateAgency}>Create Agency</button>
-//       </div>
-
-//       {loading ? (
-//         <p>Loading agencies...</p>
-//       ) : error ? (
-//         <p className="error-message">{error}</p>
-//       ) : (
-//         <table className="agencies-table">
-//           <thead>
-//             <tr>
-//               <th>Agency Name</th>
-//               <th>Email</th>
-//               <th>Status</th>
-//               <th>Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {agencies.map((agency) => (
-//               <tr key={agency.id}>
-//                 <td>{agency.name}</td>
-//                 <td>{agency.email}</td>
-//                 <td>{agency.status || "pending"}</td>
-//                 <td>
-//                   <button
-//                     onClick={() => handleAction(agency.id, "approved")}
-//                     disabled={agency.status === "approved"}
-//                   >
-//                     Approve
-//                   </button>
-//                   <button
-//                     onClick={() => handleAction(agency.id, "rejected")}
-//                     disabled={agency.status === "rejected"}
-//                   >
-//                     Reject
-//                   </button>
-//                   <button onClick={() => handleAction(agency.id, "delete")}>
-//                     Delete
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-
-//       {/* Icon link to home page */}
-//       <a href="/admin" className="home-icon-link">
-//         <img src={BackiconAdmin} alt="Home" className="home-icon" />
-//       </a>
-//     </div>
-//   );
-// };
-
-// export default ManageAgencies;
-
-
-//test
-
 import React, { useEffect, useState } from "react";
 import './ManageAgencies.css';
-import Aganceman from './Aganceman.jpg';
-import BackiconAdmin from './BackiconAdmin.jpg';
+import AgencyImage from './Aganceman.jpg';
 
 const ManageAgencies = () => {
   const [agencies, setAgencies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    table: true,
+    form: false,
+    actions: {}
+  });
   const [error, setError] = useState("");
-  const [newAgency, setNewAgency] = useState({ name: "", email: "", address: "" });
   const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [newAgency, setNewAgency] = useState({
+    agencyName: "",
+    email: "",
+    password: "",
+    confirmPassword: "", 
+    address: "",
+  });
 
   useEffect(() => {
     const fetchAgencies = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Authentication token missing. Please login again.");
+        setLoading(prev => ({...prev, table: false}));
+        return;
+      }
+
       try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-        const data = await response.json();
-        setAgencies(data);
+        const response = await fetch("https://localhost:7050/api/Agency", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        });
+
+        const responseText = await response.text();
+        
+        if (!response.ok) {
+          throw new Error(responseText || `Server responded with ${response.status}`);
+        }
+
+        const data = responseText ? JSON.parse(responseText) : [];
+        
+        if (!Array.isArray(data)) {
+          throw new Error("Expected array of agencies but got: " + typeof data);
+        }
+
+        // Format the data to match our expected structure
+        const formattedAgencies = data.map(agency => ({
+          id: agency.id,
+          agencyName: agency.agencyName,
+          email: agency.agencyEmail, // Map agencyEmail to email
+          phoneNumber: agency.phoneNumber,
+          address: agency.address,
+          isApproved: agency.isApproved
+        }));
+
+        setAgencies(formattedAgencies);
       } catch (err) {
-        setError("Failed to fetch agencies.");
-        console.error(err);
+        console.error("Fetch error:", err);
+        setError(`Error loading agencies: ${err.message}`);
       } finally {
-        setLoading(false);
+        setLoading(prev => ({...prev, table: false}));
       }
     };
+
     fetchAgencies();
-  }, []);
+  }, [successMessage]);
 
-  const handleAction = async (id, action) => {
+  const handleAgencyAction = async (agencyId, action) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Authentication token missing. Please login again.");
+      return;
+    }
+
+    setLoading(prev => ({...prev, actions: {...prev.actions, [agencyId]: true}}));
+
     try {
-      const url = `https://jsonplaceholder.typicode.com/users/${id}`;
-      const method = action === "delete" ? "DELETE" : "PUT";
+      let endpoint = "";
+      let method = "PUT";
+      
+      switch(action) {
+        case "approve":
+          endpoint = `https://localhost:7050/api/Agency/${agencyId}/approve`;
+          break;
+        case "reject":
+          endpoint = `https://localhost:7050/api/Agency/${agencyId}/reject`;
+          break;
+        case "delete":
+          endpoint = `https://localhost:7050/api/Agency/${agencyId}`;
+          method = "DELETE";
+          break;
+        default:
+          throw new Error("Invalid action");
+      }
 
-      const response = await fetch(url, {
-        method: method,
+      const response = await fetch(endpoint, {
+        method,
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: action !== "delete" ? JSON.stringify({ status: action }) : null,
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
       });
 
-      if (response.ok) {
-        if (action === "delete") {
-          setAgencies(agencies.filter((agency) => agency.id !== id));
-        } else {
-          const updatedAgencies = agencies.map((agency) =>
-            agency.id === id ? { ...agency, status: action } : agency
-          );
-          setAgencies(updatedAgencies);
-        }
-      } else {
-        setError("Failed to update agency status.");
+      const responseText = await response.text();
+      
+      if (!response.ok) {
+        throw new Error(responseText || `Action failed with status ${response.status}`);
       }
+
+      setSuccessMessage(`Agency ${action}d successfully!`);
+      
+      // Refresh agencies list after action
+      if (action === "delete") {
+        setAgencies(prev => prev.filter(agency => agency.id !== agencyId));
+      } else {
+        setAgencies(prev => prev.map(agency => {
+          if (agency.id === agencyId) {
+            return {
+              ...agency,
+              isApproved: action === "approve"
+            };
+          }
+          return agency;
+        }));
+      }
+      
     } catch (err) {
-      setError("Network error. Please try again.");
-      console.error(err);
+      console.error("Action error:", err);
+      setError(`Failed to ${action} agency: ${err.message}`);
+    } finally {
+      setLoading(prev => ({...prev, actions: {...prev.actions, [agencyId]: false}}));
     }
   };
 
   const handleCreateAgency = async () => {
-    if (!newAgency.name || !newAgency.email || !newAgency.address) {
-      setFormError("Please fill in all fields.");
+    setFormError("");
+    setSuccessMessage("");
+    setLoading(prev => ({...prev, form: true}));
+
+    const { agencyName, email, password, confirmPassword, address } = newAgency;
+    
+    if (!agencyName.trim() || !email.trim() || !password || !address.trim()) {
+      setFormError("All fields are required");
+      setLoading(prev => ({...prev, form: false}));
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError("Passwords do not match");
+      setLoading(prev => ({...prev, form: false}));
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setFormError("Authentication token missing. Please login again.");
+      setLoading(prev => ({...prev, form: false}));
       return;
     }
 
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/users", {
+      const requestData = {
+        agencyName: agencyName.trim(),
+        email: email.trim(),
+        password,
+        confirmPassword,
+        isApproved: true,
+        address: address.trim()
+      };
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch("https://localhost:7050/api/Agency/add-with-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(newAgency),
+        body: JSON.stringify(requestData),
+        signal: controller.signal
       });
 
-      if (response.ok) {
-        const createdAgency = await response.json();
-        setAgencies([...agencies, createdAgency]);
-        setNewAgency({ name: "", email: "", address: "" });
-        setFormError("");
-      } else {
-        setFormError("Failed to create agency.");
+      clearTimeout(timeout);
+
+      const responseText = await response.text();
+
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(responseText);
+          if (errorData.errors) {
+            const errorMessages = Object.values(errorData.errors).flat();
+            throw new Error(errorMessages.join("\n"));
+          }
+          throw new Error(errorData.title || errorData.message || "Request failed");
+        } catch (e) {
+          throw new Error(responseText || `HTTP ${response.status}`);
+        }
       }
+
+      const responseData = responseText ? JSON.parse(responseText) : {};
+      
+      setNewAgency({
+        agencyName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        address: ""
+      });
+      
+      setSuccessMessage("Agency created successfully!");
+      // Refresh the agencies list
+      setLoading(prev => ({...prev, table: true}));
+
     } catch (err) {
-      setFormError("Network error. Please try again.");
-      console.error(err);
+      let errorMsg = "Failed to create agency";
+      
+      if (err.name === 'AbortError') {
+        errorMsg = "Request timed out (10s). Check if server is running.";
+      } 
+      else if (err.message.includes("NetworkError")) {
+        errorMsg = "Cannot connect to server. Ensure server is running and CORS is configured";
+      }
+      else if (err.message.includes("duplicate")) {
+        errorMsg = "Email already exists. Please use a different email.";
+        setNewAgency(prev => ({...prev, email: ""}));
+      }
+      else {
+        errorMsg = err.message;
+      }
+
+      setFormError(errorMsg);
+    } finally {
+      setLoading(prev => ({...prev, form: false}));
     }
   };
 
-  // دالة لتحويل كائن العنوان إلى نص مفصل
-  const formatAddress = (address) => {
-    if (address && address.street && address.city) {
-      return `${address.street}, ${address.city}, ${address.zipcode}`;
-    }
-    return "No address";
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewAgency(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
-    <div className="manage-agencies-container" style={{ backgroundImage: `url(${Aganceman})` }} >
+    <div className="manage-agencies-container" style={{ backgroundImage: `url(${AgencyImage})` }}>
+      
+
       <h2 style={{color:"white"}}>Manage Agencies</h2>
 
       <div className="create-agency-form">
-        <h3 style={{color:"white"}}>Create New Agency</h3>
-        {formError && <p className="error-message">{formError}</p>}
+        <h3 style={{ color: "white" }}>Create New Agency</h3>
+        
+        {formError && <div className="error-message">{formError}</div>}
+
         <input
           type="text"
+          name="agencyName"
           placeholder="Agency Name"
-          value={newAgency.name}
-          onChange={(e) => setNewAgency({ ...newAgency, name: e.target.value })}
+          value={newAgency.agencyName}
+          onChange={handleInputChange}
         />
         <input
           type="email"
+          name="email"
           placeholder="Agency Email"
           value={newAgency.email}
-          onChange={(e) => setNewAgency({ ...newAgency, email: e.target.value })}
+          onChange={handleInputChange}
         />
-        
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={newAgency.password}
+          onChange={handleInputChange}
+        />
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={newAgency.confirmPassword}
+          onChange={handleInputChange}
+        />
         <input
           type="text"
-          placeholder="Agency Address"
+          name="address"
+          placeholder="Address"
           value={newAgency.address}
-          onChange={(e) => setNewAgency({ ...newAgency, address: e.target.value })}
+          onChange={handleInputChange}
         />
-        <button onClick={handleCreateAgency}>Create Agency</button>
+        
+        <button 
+          onClick={handleCreateAgency}
+          disabled={loading.form}
+        >
+          {loading.form ? "Processing..." : "Create Agency"}
+        </button>
       </div>
 
-      {loading ? (
-        <p>Loading agencies...</p>
+      {loading.table ? (
+        <div className="loading-message">Loading agencies...</div>
       ) : error ? (
-        <p className="error-message">{error}</p>
+        <div className="error-message">{error}</div>
       ) : (
-        <table className="agencies-table">
-          <thead>
-            <tr>
-              <th>Agency Name</th>
-              <th>Email</th>
-              <th>Address</th> {/* إضافة عمود العنوان في الجدول */}
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {agencies.map((agency) => (
-              <tr key={agency.id}>
-                <td>{agency.name}</td>
-                <td>{agency.email}</td>
-                {/* عرض العنوان كـ نص مفصل */}
-                <td>{formatAddress(agency.address) || "No address"}</td>
-                <td>{agency.status || "pending"}</td>
-                <td>
-                  <button
-                    onClick={() => handleAction(agency.id, "approved")}
-                    disabled={agency.status === "approved"}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleAction(agency.id, "rejected")}
-                    disabled={agency.status === "rejected"}
-                  >
-                    Reject
-                  </button>
-                  <button onClick={() => handleAction(agency.id, "delete")}>
-                    Delete
-                  </button>
-                </td>
+        <div className="agencies-table-container">
+          <table className="agencies-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {agencies.length > 0 ? (
+                agencies.map((agency) => (
+                  <tr key={agency.id}>
+                    <td>{agency.agencyName}</td>
+                    <td>{agency. email  || 'N/A'}</td>
+                    <td>{agency.isApproved ? "Approved" : "Pending"}</td>
+                    <td className="actions-cell">
+                      {!agency.isApproved && (
+                        <button
+                          className="approve-btn"
+                          onClick={() => handleAgencyAction(agency.id, "approve")}
+                          disabled={loading.actions[agency.id]}
+                        >
+                          {loading.actions[agency.id] ? "Processing..." : "Approve"}
+                        </button>
+                      )}
+                      {agency.isApproved && (
+                        <button
+                          className="reject-btn"
+                          onClick={() => handleAgencyAction(agency.id, "reject")}
+                          disabled={loading.actions[agency.id]}
+                        >
+                          {loading.actions[agency.id] ? "Processing..." : "Reject"}
+                        </button>
+                      )}
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleAgencyAction(agency.id, "delete")}
+                        disabled={loading.actions[agency.id]}
+                      >
+                        {loading.actions[agency.id] ? "Processing..." : "Delete"}
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="no-agencies">No agencies found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-      {/* Icon link to home page */}
-      <a href="/admin" className="home-icon-link">
-        <img src={BackiconAdmin} alt="Home" className="home-icon" />
-      </a>
     </div>
   );
 };
 
 export default ManageAgencies;
+
 

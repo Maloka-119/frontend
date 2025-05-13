@@ -1,177 +1,6 @@
-// the real one
-
-// import React, { useEffect, useState } from "react";
-// import './ManageTripCategories.css';
-// import Categoryman from './Categoryman.jpg';
-// import BackiconAdmin from './BackiconAdmin.jpg';
-
-// const ManageTripCategories = () => {
-//   const [categories, setCategories] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-//   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
-//   const [formError, setFormError] = useState("");
-//   const [editingCategory, setEditingCategory] = useState(null);
-
-//   const apiUrl = "YOUR_BACKEND_API_URL"; // استبدل بهذا الرابط الصحيح للـ API
-
-//   // جلب الفئات من الـ API عند تحميل الصفحة
-//   useEffect(() => {
-//     const fetchCategories = async () => {
-//       try {
-//         const response = await fetch(`${apiUrl}/categories`);
-//         const data = await response.json();
-//         setCategories(data);
-//       } catch (err) {
-//         setError("Failed to fetch categories.");
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchCategories();
-//   }, []);
-
-//   // التعامل مع إضافة أو تحديث أو حذف الفئات
-//   const handleAction = async (id, action) => {
-//     try {
-//       const url = `${apiUrl}/categories/${id}`;
-//       const method = action === "delete" ? "DELETE" : "PUT";
-
-//       const response = await fetch(url, {
-//         method: method,
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: action !== "delete" ? JSON.stringify(newCategory) : null,
-//       });
-
-//       if (response.ok) {
-//         if (action === "delete") {
-//           setCategories(categories.filter((category) => category.id !== id));
-//         } else {
-//           const updatedCategories = categories.map((category) =>
-//             category.id === id ? { ...category, ...newCategory } : category
-//           );
-//           setCategories(updatedCategories);
-//         }
-//       } else {
-//         setError("Failed to update category.");
-//       }
-//     } catch (err) {
-//       setError("Network error. Please try again.");
-//       console.error(err);
-//     }
-//   };
-
-//   // إضافة فئة جديدة
-//   const handleCreateCategory = async () => {
-//     if (!newCategory.name || !newCategory.description) {
-//       setFormError("Please fill in all fields.");
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch(`${apiUrl}/categories`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(newCategory),
-//       });
-
-//       if (response.ok) {
-//         const createdCategory = await response.json();
-//         setCategories([...categories, createdCategory]);
-//         setNewCategory({ name: "", description: "" });
-//         setFormError("");
-//       } else {
-//         setFormError("Failed to create category.");
-//       }
-//     } catch (err) {
-//       setFormError("Network error. Please try again.");
-//       console.error(err);
-//     }
-//   };
-
-//   const handleEditCategory = (category) => {
-//     setEditingCategory(category);
-//     setNewCategory({ name: category.name, description: category.description });
-//   };
-
-//   return (
-//     <div className="manage-trip-categories-container" style={{ backgroundImage: `url(${Categoryman})` }}>
-//       <h2 style={{color:"white"}}>Manage Trip Categories</h2>
-
-//       {/* إضافة فئة جديدة */}
-//       <div className="create-category-form">
-//         <h3 style={{color:"white"}}>{editingCategory ? "Edit Category" : "Create New Category"}</h3>
-//         {formError && <p className="error-message">{formError}</p>}
-//         <input
-//           type="text"
-//           placeholder="Category Name"
-//           value={newCategory.name}
-//           onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-//         />
-//         <input
-//           type="text"
-//           placeholder="Category Description"
-//           value={newCategory.description}
-//           onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-//         />
-//         <button onClick={editingCategory ? () => handleAction(editingCategory.id, "update") : handleCreateCategory}>
-//           {editingCategory ? "Update Category" : "Create Category"}
-//         </button>
-//       </div>
-
-//       {/* عرض الفئات */}
-//       {loading ? (
-//         <p>Loading categories...</p>
-//       ) : error ? (
-//         <p className="error-message">{error}</p>
-//       ) : (
-//         <table className="categories-table">
-//           <thead>
-//             <tr>
-//               <th>Category Name</th>
-//               <th>Description</th>
-//               <th>Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {categories.map((category) => (
-//               <tr key={category.id}>
-//                 <td>{category.name}</td>
-//                 <td>{category.description}</td>
-//                 <td>
-//                   <button onClick={() => handleEditCategory(category)}>Edit</button>
-//                   <button onClick={() => handleAction(category.id, "delete")}>Delete</button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-
-//       {/* Icon link to home page */}
-//       <a href="/admin" className="home-icon-link">
-//         <img src={BackiconAdmin} alt="Home" className="home-icon" />
-//       </a>
-//     </div>
-//   );
-// };
-
-// export default ManageTripCategories;
-
- 
-
-
-//test
-
 import React, { useEffect, useState } from "react";
 import './ManageTripCategories.css';
-import Categoryman from './Categoryman.jpg'
-import BackiconAdmin from './BackiconAdmin.jpg'
+import Categoryman from './Categoryman.jpg';
 
 const ManageTripCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -181,147 +10,233 @@ const ManageTripCategories = () => {
   const [formError, setFormError] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
 
-  // جلب الفئات من الـ API عند تحميل الصفحة
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/posts"); // API وهمي لاختبار الكود
-        const data = await response.json();
-        setCategories(data);
-      } catch (err) {
-        setError("Failed to fetch categories.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCategories();
   }, []);
 
-  // التعامل مع إضافة أو تحديث أو حذف الفئات
-  const handleAction = async (id, action) => {
+  const fetchCategories = async () => {
     try {
-      const url = `https://jsonplaceholder.typicode.com/posts/${id}`; // API وهمي لاختبار الكود
-      const method = action === "delete" ? "DELETE" : "PUT";
-
-      const response = await fetch(url, {
-        method: method,
+      const storedToken = localStorage.getItem("token");
+      const response = await fetch("https://localhost:7050/api/TripCategory", {
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: action !== "delete" ? JSON.stringify(newCategory) : null,
+          "Authorization": `Bearer ${storedToken}`,
+          "Content-Type": "application/json"
+        }
       });
 
-      if (response.ok) {
-        if (action === "delete") {
-          setCategories(categories.filter((category) => category.id !== id));
-        } else {
-          const updatedCategories = categories.map((category) =>
-            category.id === id ? { ...category, ...newCategory } : category
-          );
-          setCategories(updatedCategories);
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = '/login';
+          return;
         }
-      } else {
-        setError("Failed to update category.");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      setCategories(data);
     } catch (err) {
-      setError("Network error. Please try again.");
-      console.error(err);
+      showError(err.message.includes('Failed to fetch') 
+        ? "Cannot connect to server. Please check your connection."
+        : err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // إضافة فئة جديدة
+  const showError = (message) => {
+    setError(message);
+    setTimeout(() => setError(""), 3000);
+  };
+
+  const showFormError = (message) => {
+    setFormError(message);
+    setTimeout(() => setFormError(""), 3000);
+  };
+
   const handleCreateCategory = async () => {
     if (!newCategory.name || !newCategory.description) {
-      setFormError("Please fill in all fields.");
+      showFormError("Please fill in all fields");
+      return;
+    }
+
+    // تحقق من وجود الفئة قبل الإضافة
+    const categoryExists = categories.some(
+      (category) => category.name.toLowerCase() === newCategory.name.toLowerCase()
+    );
+    if (categoryExists) {
+      showFormError("Category already exists");
       return;
     }
 
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts", { // API وهمي لاختبار الكود
+      const storedToken = localStorage.getItem("token");
+      const response = await fetch("https://localhost:7050/api/TripCategory", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Authorization": `Bearer ${storedToken}`,
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify({
+          Name: newCategory.name,
+          Description: newCategory.description
+        }),
       });
 
-      if (response.ok) {
-        const createdCategory = await response.json();
-        setCategories([...categories, createdCategory]);
-        setNewCategory({ name: "", description: "" });
-        setFormError("");
-      } else {
-        setFormError("Failed to create category.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error creating category:", errorData);
+        throw new Error(` ${response.status}`);
       }
+
+      await fetchCategories();
+      setNewCategory({ name: "", description: "" });
     } catch (err) {
-      setFormError("Network error. Please try again.");
-      console.error(err);
+      showFormError(err.message || "Failed to create category.");
     }
   };
 
-  const handleEditCategory = (category) => {
+  const handleUpdateCategory = async () => {
+    if (!editingCategory) return;
+
+    if (!newCategory.name || !newCategory.description) {
+      showFormError("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const storedToken = localStorage.getItem("token");
+      const response = await fetch(`https://localhost:7050/api/TripCategory/${editingCategory.id}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${storedToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          Name: newCategory.name,
+          Description: newCategory.description
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating category:", errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      await fetchCategories();
+      setEditingCategory(null);
+      setNewCategory({ name: "", description: "" });
+    } catch (err) {
+      showError(err.message || "Failed to update category.");
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?")) return;
+
+    try {
+      const storedToken = localStorage.getItem("token");
+      const response = await fetch(`https://localhost:7050/api/TripCategory/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${storedToken}`,
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error deleting category:", errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // حذف العنصر من الواجهة بدون انتظار إعادة تحميل
+      setCategories(prev => prev.filter(cat => cat.id !== id));
+
+    } catch (err) {
+      showError(err.message || "Failed to delete category.");
+    }
+  };
+
+  const handleEditClick = (category) => {
     setEditingCategory(category);
-    setNewCategory({ name: category.name, description: category.body });
+    setNewCategory({ 
+      name: category.name, 
+      description: category.description 
+    });
   };
 
   return (
     <div className="manage-trip-categories-container" style={{ backgroundImage: `url(${Categoryman})` }}>
       <h2 style={{color:"white"}}>Manage Trip Categories</h2>
 
-      {/* إضافة فئة جديدة */}
+      {error && <div className="error-message">{error}</div>}
+
       <div className="create-category-form">
         <h3 style={{color:"white"}}>{editingCategory ? "Edit Category" : "Create New Category"}</h3>
-        {formError && <p className="error-message">{formError}</p>}
+        
+        {formError && <div className="form-error">{formError}</div>}
+        
         <input
           type="text"
           placeholder="Category Name"
           value={newCategory.name}
-          onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+          onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
         />
+        
         <input
           type="text"
           placeholder="Category Description"
           value={newCategory.description}
-          onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+          onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
         />
-        <button onClick={editingCategory ? () => handleAction(editingCategory.id, "update") : handleCreateCategory}>
-          {editingCategory ? "Update Category" : "Create Category"}
-        </button>
+        
+        <div className="form-actions">
+          {editingCategory ? (
+            <>
+              <button onClick={handleUpdateCategory}>Update</button>
+              <button onClick={() => {
+                setEditingCategory(null);
+                setNewCategory({ name: "", description: "" });
+              }}>Cancel</button>
+            </>
+          ) : (
+            <button onClick={handleCreateCategory}>Create</button>
+          )}
+        </div>
       </div>
 
-      {/* عرض الفئات */}
       {loading ? (
-        <p>Loading categories...</p>
-      ) : error ? (
-        <p className="error-message">{error}</p>
+        <div className="loading">Loading categories...</div>
       ) : (
-        <table className="categories-table">
-          <thead>
-            <tr>
-              <th>Category Name</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.title}</td>
-                <td>{category.body}</td>
-                <td>
-                  <button onClick={() => handleEditCategory(category)}>Edit</button>
-                  <button onClick={() => handleAction(category.id, "delete")}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="categories-list">
+          {categories.length === 0 ? (
+            <p>No categories found</p>
+          ) : (
+            <table className="categories-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.map((category) => (
+                  <tr key={category.id}>
+                    <td>{category.name}</td>
+                    <td>{category.description}</td>
+                    <td>
+                      <button onClick={() => handleEditClick(category)}>Edit</button>
+                      <button onClick={() => handleDeleteCategory(category.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       )}
-      {/* Icon link to home page */}
-  <a href="/admin" className="home-icon-link">
-    <img src={BackiconAdmin} alt="Home" className="home-icon" /> 
-  </a>
     </div>
   );
 };
